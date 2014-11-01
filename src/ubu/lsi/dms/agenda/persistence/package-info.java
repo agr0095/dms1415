@@ -10,4 +10,4 @@
  * @author Carlos López
  *
  */
-package ubu.lsi.dms.agenda.persistencia;
+package ubu.lsi.dms.agenda.persistence;
