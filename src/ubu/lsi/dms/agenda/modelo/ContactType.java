@@ -8,15 +8,39 @@ import java.io.Serializable;
  *
  */
 @SuppressWarnings("serial")
-public class TipoContacto implements Serializable{
+public class ContactType implements Serializable{
 	private int idTipoContacto;
 	private String TipoContacto;
 	
 	
-	public TipoContacto(int idTipoContacto, String tipoContacto) {
+	public ContactType(int idTipoContacto, String tipoContacto) {
 		super();
 		this.idTipoContacto = idTipoContacto;
 		TipoContacto = tipoContacto;
+	}
+
+
+	/**
+	 * @return the tipoContacto
+	 */
+	public String getTipoContacto() {
+		return TipoContacto;
+	}
+
+
+	/**
+	 * @param tipoContacto the tipoContacto to set
+	 */
+	public void setTipoContacto(String tipoContacto) {
+		TipoContacto = tipoContacto;
+	}
+
+
+	/**
+	 * @return the idTipoContacto
+	 */
+	public int getIdTipoContacto() {
+		return idTipoContacto;
 	}
 
 
