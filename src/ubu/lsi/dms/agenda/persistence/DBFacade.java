@@ -38,8 +38,7 @@ public class DBFacade implements PersistenceFacade {
 	}
 
 	@Override
-	public Contact getContact(String surname) {
-		// TODO Auto-generated method stub
+	public Contact getContact(String surname) {// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -87,8 +86,41 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public List<Call> getCallsByContact(Contact contacto) {
-		// TODO Auto-generated method stub
-		return null;
+		// Creamos una lista para meter los tipos de contacto
+				List<Call> callList = new ArrayList<Call>();
+				// Creamos las sentencias de seleción
+				String contactTypeSentence = "select * from llamadas where idcontacto = ? ";
+				// Creamos la url de conexión a base de datos
+				String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+
+				try {
+					// Obtenemos la conexión a la base de datos
+					Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+
+					// Preparamos la sentencia y la ejecutamos
+					PreparedStatement psContact = conn
+							.prepareStatement(contactTypeSentence);
+					psContact.setInt(1, contacto.getIdContacto());
+					ResultSet rs = psContact.executeQuery();
+
+					// Añadimos todos los tipos de contacto a la lista
+					while (rs.next()) {
+						callList.add(
+								new Call(rs.getInt("idLlamada"), 
+										contacto,
+										rs.getString("fechallamada"), 
+										rs.getString("asunto"), 
+										rs.getString("notas")));
+					}
+					
+					rs.close();
+					psContact.close();
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+
+				return callList;
 	}
 
 	@Override
