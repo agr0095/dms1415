@@ -8,16 +8,14 @@ import ubu.lsi.dms.agenda.modelo.ContactType;
 
 public class BinaryFacade implements PersistenceFacade {
 
-	private PersistenceFacade instance = null;
+	private static PersistenceFacade instance = new BinaryFacade();
 
 	private BinaryFacade() {
 	} // BinaryFacade
 
 	@Override
 	public PersistenceFacade createPersistenceFacade() {
-		if (instance == null)
-			instance = new BinaryFacade();
-		return this.instance;
+		return instance;
 	} // createPersistenceFacade
 
 	@Override
