@@ -39,7 +39,7 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public Contact getContact(String surname) {
-		// Creamos las sentencias de seleción		
+		// Creamos las sentencias de seleción
 		String getContactBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
 
 		// Creamos la url de conexión a base de datos
@@ -57,7 +57,7 @@ public class DBFacade implements PersistenceFacade {
 			psContact.setString(1, surname);
 			ResultSet rs = psContact.executeQuery();
 
-			//Recogemos todos los datos necesarios para crear el contacto
+			// Recogemos todos los datos necesarios para crear el contacto
 			if (rs.next()) {
 				idContacto = rs.getInt("idcontacto");
 				nombre = rs.getString("nombre");
@@ -80,11 +80,11 @@ public class DBFacade implements PersistenceFacade {
 				idTipoContacto = rs.getInt("idtipocontacto");
 				tipoContacto = rs.getString("tipocontacto");
 			}
-			//Cerramos los recursos
+			// Cerramos los recursos
 			rs.close();
 			psContact.close();
 			conn.close();
-			
+
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -134,8 +134,64 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public List<Contact> getContactsBySurname(String surname) {
-		// TODO Auto-generated method stub
-		return null;
+		//Creamos la lista que posteriormente vamos a llena
+		List<Contact> contactList = new ArrayList<Contact>();
+		// Creamos las sentencias de seleción
+		String getContactsBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
+
+		// Creamos la url de conexión a base de datos
+		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		int idContacto = 0, idTipoContacto = 0;
+		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
+
+		try {
+			// Obtenemos la conexión a la base de datos
+			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+
+			// Preparamos la sentencia y la ejecutamos
+			PreparedStatement psContact = conn
+					.prepareStatement(getContactsBySurnameSentence);
+			psContact.setString(1, surname);
+			ResultSet rs = psContact.executeQuery();
+
+			// Recogemos todos los datos necesarios para crear el contacto
+			while (rs.next()) {
+				idContacto = rs.getInt("idcontacto");
+				nombre = rs.getString("nombre");
+				apellidos = rs.getString("apellidos");
+				estimado = rs.getString("estimado");
+				direccion = rs.getString("direccion");
+				ciudad = rs.getString("ciudad");
+				prov = rs.getString("prov");
+				codPostal = rs.getString("codpostal");
+				region = rs.getString("region");
+				pais = rs.getString("pais");
+				nombreCompania = rs.getString("nombrecompania");
+				cargo = rs.getString("cargo");
+				telefonoTrabajo = rs.getString("telefonotrabajo");
+				extensionTrabajo = rs.getString("extensiontrabajo");
+				telefonoMovil = rs.getString("telefonomovil");
+				numFax = rs.getString("numfax");
+				nomCorreoElectronico = rs.getString("nomcorreoelectronico");
+				notas = rs.getString("notas");
+				idTipoContacto = rs.getInt("idtipocontacto");
+				tipoContacto = rs.getString("tipocontacto");
+				contactList.add(new Contact(idContacto, nombre, apellidos, estimado, direccion,
+						ciudad, prov, codPostal, region, pais, nombreCompania, cargo,
+						telefonoTrabajo, extensionTrabajo, telefonoMovil, numFax,
+						nomCorreoElectronico, notas, new ContactType(idTipoContacto,
+								tipoContacto)));
+			}
+			// Cerramos los recursos
+			rs.close();
+			psContact.close();
+			conn.close();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+
+		return contactList;
 	}
 
 	@Override
