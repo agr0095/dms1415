@@ -109,8 +109,37 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void insertCall(Call call) {
-		// TODO Auto-generated method stub
+		// Creamos las sentencias de seleción
+		String insertCallSentence = "insert into llamadas (idllamada, fechallamada, asunto, notas ,idcontacto) values ( ? , ? , ? , ? , ? );";
 
+		// Creamos la url de conexión a base de datos
+		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		
+		try {
+			// Obtenemos la conexión a la base de datos
+			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+
+			// Preparamos la sentencia y la ejecutamos
+			PreparedStatement psContact = conn
+					.prepareStatement(insertCallSentence);
+			// TODO establecer los parámetros de la inserción
+			psContact.setInt(1, call.getIdLlamada());
+			psContact.setString(2,call.getFechaLlamada());
+			psContact.setString(3, call.getAsunto());
+			psContact.setString(4, call.getNotas());
+			psContact.setInt(5, call.getContacto().getIdContacto());
+
+			if (psContact.executeUpdate() == 0) {
+				new SQLException("No se han producido inserciones!");
+			}
+
+			// Cerramos los recursos
+			psContact.close();
+			conn.close();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
