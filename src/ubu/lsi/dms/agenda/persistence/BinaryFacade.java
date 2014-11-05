@@ -32,9 +32,7 @@ public class BinaryFacade implements PersistenceFacade {
 
 	@Override
 	public PersistenceFacade createPersistenceFacade() {
-		if (instance == null)
-			instance = new BinaryFacade();
-		return this.instance;
+		return instance;
 	} // createPersistenceFacade
 
 	@Override
