@@ -103,8 +103,58 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void insertContact(Contact contact) {
-		// TODO Auto-generated method stub
+		//Sentencia de inserción
+		String insertContactSentence = "insert into contactos " +
+				" ( IDCONTACTO, NOMBRE, APELLIDOS, ESTIMADO, DIRECCION, " +
+				" CIUDAD, PROV, CODPOSTAL, REGION, PAIS, NOMBRECOMPANIA, " +
+				" CARGO, TELEFONOTRABAJO, EXTENSIONTRABAJO, TELEFONOMOVIL, NUMFAX, " +
+				" NOMCORREOELECTRONICO, IDTIPOCONTACTO, NOTAS ) " +
+				" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+		
+		// Creamos la url de conexión a base de datos
+		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		
+		try {
+			// Obtenemos la conexión a la base de datos
+			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
 
+			// Preparamos la sentencia y la ejecutamos
+			PreparedStatement psContact = conn
+					.prepareStatement(insertContactSentence);
+			
+			// Establecemos los parámetros de la inserción
+			psContact.setInt(1, contact.getIdContacto());
+			psContact.setString(2, contact.getNombre());
+			psContact.setString(3, contact.getApellidos());
+			psContact.setString(4, contact.getEstimado());
+			psContact.setString(5, contact.getDireccion());
+			psContact.setString(6, contact.getCiudad());
+			psContact.setString(7, contact.getProv());
+			psContact.setString(8, contact.getCodPostal());
+			psContact.setString(9, contact.getRegion());
+			psContact.setString(10, contact.getPais());
+			psContact.setString(11, contact.getNombreCompania());
+			psContact.setString(12, contact.getCargo());
+			psContact.setString(13, contact.getTelefonoTrabajo());
+			psContact.setString(14, contact.getExtensionTrabajo());
+			psContact.setString(15, contact.getTelefonoMovil());
+			psContact.setString(16, contact.getNumFax());
+			psContact.setString(17, contact.getNomCorreoElectronico());
+			psContact.setInt(18, contact.getTipoContacto().getIdTipoContacto());
+			psContact.setString(19, contact.getNotas());
+
+			//Comprobamos que la actualización haya sido exitosa.
+			if (psContact.executeUpdate() == 0) {
+				new SQLException("No se han producido inserciones!");
+			}
+
+			// Cerramos los recursos
+			psContact.close();
+			conn.close();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
