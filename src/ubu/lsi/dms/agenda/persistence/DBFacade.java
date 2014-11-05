@@ -1,12 +1,17 @@
 package ubu.lsi.dms.agenda.persistence;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
@@ -110,7 +115,35 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void insertContactType(ContactType ct) {
-		// TODO Auto-generated method stub
+		// Creamos las sentencias de seleción
+		String insertCallSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
+
+		// Creamos la url de conexión a base de datos
+		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		
+		try {
+			// Obtenemos la conexión a la base de datos
+			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+
+			// Preparamos la sentencia y la ejecutamos
+			PreparedStatement psContact = conn
+					.prepareStatement(insertCallSentence);
+			
+			// TODO establecer los parámetros de la inserción
+			psContact.setInt(1, ct.getIdTipoContacto());
+			psContact.setString(2, ct.getTipoContacto());
+
+			if (psContact.executeUpdate() == 0) {
+				new SQLException("No se han producido inserciones!");
+			}
+
+			// Cerramos los recursos
+			psContact.close();
+			conn.close();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 
 	}
 
@@ -134,7 +167,7 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public List<Contact> getContactsBySurname(String surname) {
-		//Creamos la lista que posteriormente vamos a llena
+		// Creamos la lista que posteriormente vamos a llena
 		List<Contact> contactList = new ArrayList<Contact>();
 		// Creamos las sentencias de seleción
 		String getContactsBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
@@ -176,11 +209,12 @@ public class DBFacade implements PersistenceFacade {
 				notas = rs.getString("notas");
 				idTipoContacto = rs.getInt("idtipocontacto");
 				tipoContacto = rs.getString("tipocontacto");
-				contactList.add(new Contact(idContacto, nombre, apellidos, estimado, direccion,
-						ciudad, prov, codPostal, region, pais, nombreCompania, cargo,
-						telefonoTrabajo, extensionTrabajo, telefonoMovil, numFax,
-						nomCorreoElectronico, notas, new ContactType(idTipoContacto,
-								tipoContacto)));
+				contactList.add(new Contact(idContacto, nombre, apellidos,
+						estimado, direccion, ciudad, prov, codPostal, region,
+						pais, nombreCompania, cargo, telefonoTrabajo,
+						extensionTrabajo, telefonoMovil, numFax,
+						nomCorreoElectronico, notas, new ContactType(
+								idTipoContacto, tipoContacto)));
 			}
 			// Cerramos los recursos
 			rs.close();
