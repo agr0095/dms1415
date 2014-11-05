@@ -7,8 +7,6 @@ import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
 
 public interface PersistenceFacade {
-	
-	public abstract PersistenceFacade createPersistenceFacade();
 
 	/**
 	 * Busca un contacto por apellido dentro de la agenda

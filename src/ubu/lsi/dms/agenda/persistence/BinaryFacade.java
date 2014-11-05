@@ -17,7 +17,7 @@ import ubu.lsi.dms.agenda.modelo.ContactType;
 public class BinaryFacade implements PersistenceFacade {
 
 	// Instancia de la propia clase
-	private PersistenceFacade instance = null;
+	private static final PersistenceFacade instance = new BinaryFacade();
 
 	// Los ficheros de persistencia
 	private final File calls;
@@ -30,10 +30,15 @@ public class BinaryFacade implements PersistenceFacade {
 		contactTypes = new File(".\\rsc\\contactTypes.dat");
 	} // BinaryFacade
 
-	@Override
-	public PersistenceFacade createPersistenceFacade() {
+	/**
+	 * Devuelve una referencia a la instancia de la propia clase. La referencia
+	 * es a un objeto BinaryFacade.
+	 * 
+	 * @return instancia de BinaryFacade.
+	 */
+	public static PersistenceFacade getInstance() {
 		return instance;
-	} // createPersistenceFacade
+	} // getInstance
 
 	@Override
 	public List<Call> getCallsByContact(Contact contact) {
@@ -148,7 +153,7 @@ public class BinaryFacade implements PersistenceFacade {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		}
-		
+
 	} // insertCall
 
 	@Override

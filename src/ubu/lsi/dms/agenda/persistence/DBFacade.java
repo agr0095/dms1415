@@ -14,7 +14,7 @@ import ubu.lsi.dms.agenda.modelo.ContactType;
 
 public class DBFacade implements PersistenceFacade {
 
-	private DBFacade singleInstance;
+	private static final PersistenceFacade instance = new DBFacade();
 
 	/**
 	 * Constructor de la fachada: hemos impedido su uso para seguir el patrón
@@ -30,11 +30,8 @@ public class DBFacade implements PersistenceFacade {
 	 * 
 	 * @return instancia de DBFacade.
 	 */
-	@Override
-	public PersistenceFacade createPersistenceFacade() {
-		if (singleInstance == null)
-			singleInstance = new DBFacade();
-		return singleInstance;
+	public static PersistenceFacade getInstance() {
+		return instance;
 	}
 
 	@Override

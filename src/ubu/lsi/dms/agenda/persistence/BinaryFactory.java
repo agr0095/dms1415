@@ -11,8 +11,7 @@ public class BinaryFactory implements PersistenceFactory {
 	 */
 	@Override
 	public PersistenceFacade createPersistenceFacade() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return BinaryFacade.getInstance();
+	} // createPersistenceFacade
 
-}
+} // class BinaryFactory

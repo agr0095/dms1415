@@ -11,8 +11,7 @@ public class DBFactory implements PersistenceFactory {
 	 */
 	@Override
 	public PersistenceFacade createPersistenceFacade() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return DBFacade.getInstance();
+	} // createPersistenceFacade
 
-}
+} // class DBFactory
