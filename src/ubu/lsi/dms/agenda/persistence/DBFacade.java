@@ -190,7 +190,7 @@ public class DBFacade implements PersistenceFacade {
 	@Override
 	public void insertContactType(ContactType ct) {
 		// Creamos las sentencias de seleción
-		String insertCallSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
+		String insertContactTypeSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
 
 		// Creamos la url de conexión a base de datos
 		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
@@ -201,7 +201,7 @@ public class DBFacade implements PersistenceFacade {
 
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement psContact = conn
-					.prepareStatement(insertCallSentence);
+					.prepareStatement(insertContactTypeSentence);
 			
 			// Establecemos los parámetros de la inserción
 			psContact.setInt(1, ct.getIdTipoContacto());
@@ -223,8 +223,58 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void updateContact(Contact contact) {
-		// TODO Auto-generated method stub
+		//Sentencia de inserción
+		String insertContactSentence = "update contactos set NOMBRE = ?, "
+				+ "APELLIDOS = ?, ESTIMADO = ?, DIRECCION = ?, " +
+				" CIUDAD = ?, PROV = ?, CODPOSTAL = ?, REGION = ?, PAIS = ?, NOMBRECOMPANIA = ?, " +
+				" CARGO = ?, TELEFONOTRABAJO = ?, EXTENSIONTRABAJO = ?, TELEFONOMOVIL = ?, NUMFAX = ?, " +
+				" NOMCORREOELECTRONICO = ?, IDTIPOCONTACTO = ?, NOTAS = ?  " +
+				" where idcontacto = ?";
+		
+		// Creamos la url de conexión a base de datos
+		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		
+		try {
+			// Obtenemos la conexión a la base de datos
+			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
 
+			// Preparamos la sentencia y la ejecutamos
+			PreparedStatement psContact = conn
+					.prepareStatement(insertContactSentence);
+			
+			// Establecemos los parámetros de la inserción
+			psContact.setString(1, contact.getNombre());
+			psContact.setString(2, contact.getApellidos());
+			psContact.setString(3, contact.getEstimado());
+			psContact.setString(4, contact.getDireccion());
+			psContact.setString(5, contact.getCiudad());
+			psContact.setString(6, contact.getProv());
+			psContact.setString(7, contact.getCodPostal());
+			psContact.setString(8, contact.getRegion());
+			psContact.setString(9, contact.getPais());
+			psContact.setString(10, contact.getNombreCompania());
+			psContact.setString(11, contact.getCargo());
+			psContact.setString(12, contact.getTelefonoTrabajo());
+			psContact.setString(13, contact.getExtensionTrabajo());
+			psContact.setString(14, contact.getTelefonoMovil());
+			psContact.setString(15, contact.getNumFax());
+			psContact.setString(16, contact.getNomCorreoElectronico());
+			psContact.setInt(17, contact.getTipoContacto().getIdTipoContacto());
+			psContact.setString(18, contact.getNotas());
+			psContact.setInt(19, contact.getIdContacto());
+
+			//Comprobamos que la actualización haya sido exitosa.
+			if (psContact.executeUpdate() == 0) {
+				new SQLException("No se han producido inserciones!");
+			}
+
+			// Cerramos los recursos
+			psContact.close();
+			conn.close();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -396,6 +446,22 @@ public class DBFacade implements PersistenceFacade {
 		}
 
 		return contactList;
+	}// Aquí debería haber una línea
+
+	public static void main(String args[]) {
+		DBFacade dbf = new DBFacade();
+		PersistenceFacade pf = dbf.createPersistenceFacade();
+		ContactType ct = new ContactType( 12, "nuevotipocontacto");
+		Contact contacto = new Contact(1, "capullo", "mactetis",
+				"no-estimado", "calle penose, nº5", "pucela", "pucela",
+				"09999", "espanistan", "europa", "ruinedcompany", "president",
+				null, null, null, null, null,null, new ContactType(13, "tipo"));
+//		System.out.println(pf.getCallsByContact(contacto));
+//		pf.insertCall(new Call(46, contacto, "2014-10-18 02:00:00", "ninguno","sin notas"));
+		//pf.insertContactType(ct);
+		//pf.insertContact(contacto);
+		//pf.updateContactType(ct);
+		pf.updateContact(contacto);
 	}
 
 }
