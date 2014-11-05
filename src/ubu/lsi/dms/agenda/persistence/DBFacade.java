@@ -1,17 +1,12 @@
 package ubu.lsi.dms.agenda.persistence;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
@@ -172,7 +167,7 @@ public class DBFacade implements PersistenceFacade {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement psContact = conn
 					.prepareStatement(insertCallSentence);
-			// TODO establecer los parámetros de la inserción
+			// Establecemos los parámetros de la inserción
 			psContact.setInt(1, call.getIdLlamada());
 			psContact.setString(2,call.getFechaLlamada());
 			psContact.setString(3, call.getAsunto());
@@ -208,7 +203,7 @@ public class DBFacade implements PersistenceFacade {
 			PreparedStatement psContact = conn
 					.prepareStatement(insertCallSentence);
 			
-			// TODO establecer los parámetros de la inserción
+			// Establecemos los parámetros de la inserción
 			psContact.setInt(1, ct.getIdTipoContacto());
 			psContact.setString(2, ct.getTipoContacto());
 
@@ -240,8 +235,35 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void updateContactType(ContactType ct) {
-		// TODO Auto-generated method stub
+		// Creamos las sentencias de seleción
+				String insertCallSentence = "update tiposdecontacto set tipocontacto = ? where idtipocontacto = ?;";
 
+				// Creamos la url de conexión a base de datos
+				String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+				
+				try {
+					// Obtenemos la conexión a la base de datos
+					Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+
+					// Preparamos la sentencia y la ejecutamos
+					PreparedStatement psContact = conn
+							.prepareStatement(insertCallSentence);
+					
+					// Establecemos los parámetros de la inserción
+					psContact.setString(1, ct.getTipoContacto());
+					psContact.setInt(2, ct.getIdTipoContacto());
+
+					if (psContact.executeUpdate() == 0) {
+						new SQLException("No se han producido inserciones!");
+					}
+
+					// Cerramos los recursos
+					psContact.close();
+					conn.close();
+
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
 	}
 
 	@Override
