@@ -337,4 +337,22 @@ public class Contact implements Serializable {
 				+ notas + ", tipoContacto=" + tipoContacto + "]";
 	}
 
+	/**
+	 * Compara un contacto con éste contacto La comparación es de los IDs de los
+	 * contactos.
+	 * 
+	 * @param other
+	 *            el contacto con el que comparar éste contacto.
+	 * @return 0 si se trata del mismo contacto, numero negativo (menor que 0)
+	 *         si éste contacto es menor que el otro, numero positivo (mayor que
+	 *         0) si éste contacto es mayor que el otro.
+	 */
+	public int compareTo(Contact other) {
+		if (this.idContacto == other.idContacto)
+			return 0;
+		else if (this.idContacto < other.idContacto)
+			return -2;
+		return 2;
+	}
+
 }
