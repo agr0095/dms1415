@@ -276,9 +276,45 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void updateCall(Call call) {
-		// TODO Auto-generated method stub
+		String insertCallSentence = "update contactos set idcontacto = ?, "
+				+ "fechallamada = ?, asunto = ?, notas = ?, " +
+				" where idllamada = ?";
+		
+		// Creamos la url de conexión a base de datos
+		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		
+		try {
+			// Obtenemos la conexión a la base de datos
+			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
 
+			// Preparamos la sentencia y la ejecutamos
+			PreparedStatement psCall = conn
+					.prepareStatement(insertCallSentence);
+			
+			// Establecemos los parámetros de la inserción
+			psCall.setInt(1, call.getContacto().getIdContacto());
+			psCall.setString(2, call.getFechaLlamada());
+			psCall.setString(3, call.getAsunto());
+			psCall.setString(4, call.getNotas());
+			psCall.setInt(5, call.getIdLlamada());
+		
+			//Comprobamos que la actualización haya sido exitosa.
+			if (psCall.executeUpdate() == 0) {
+				new SQLException("No se ha podido actualizar la llamada");
+			}
+
+			// Cerramos los recursos
+			psCall.close();
+			conn.close();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
+
+	
+
+	
 
 	@Override
 	public void updateContactType(ContactType ct) {
