@@ -447,7 +447,7 @@ public class DBFacade implements PersistenceFacade {
 
 	public static void main(String args[]) {
 		DBFacade dbf = new DBFacade();
-		PersistenceFacade pf = dbf.createPersistenceFacade();
+		PersistenceFacade pf = dbf.getInstance();
 		ContactType ct = new ContactType( 12, "nuevotipocontacto");
 		Contact contacto = new Contact(1, "capullo", "mactetis",
 				"no-estimado", "calle penose, nº5", "pucela", "pucela",

@@ -43,11 +43,10 @@ public class BinaryFacade implements PersistenceFacade {
 	@Override
 	public List<Call> getCallsByContact(Contact contact) {
 		List<Call> callList = new ArrayList<Call>();
-		ObjectInputStream in;
+		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(calls));
 			callList = (ArrayList<Call>) in.readObject();
-			in.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -57,6 +56,15 @@ public class BinaryFacade implements PersistenceFacade {
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 		List<Call> callsByContact = new ArrayList<Call>();
@@ -69,11 +77,10 @@ public class BinaryFacade implements PersistenceFacade {
 	@Override
 	public Contact getContact(String surname) {
 		List<Contact> contactList = new ArrayList<Contact>();
-		ObjectInputStream in;
+		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
 			contactList = (ArrayList<Contact>) in.readObject();
-			in.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -83,6 +90,15 @@ public class BinaryFacade implements PersistenceFacade {
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 		for (Contact c : contactList)
@@ -94,11 +110,10 @@ public class BinaryFacade implements PersistenceFacade {
 	@Override
 	public List<Contact> getContactsBySurname(String surname) {
 		List<Contact> contactList = new ArrayList<Contact>();
-		ObjectInputStream in;
+		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
 			contactList = (ArrayList<Contact>) in.readObject();
-			in.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -108,6 +123,15 @@ public class BinaryFacade implements PersistenceFacade {
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 		List<Contact> contactsBySurname = new ArrayList<Contact>();
@@ -121,11 +145,10 @@ public class BinaryFacade implements PersistenceFacade {
 	@Override
 	public List<ContactType> getContactTypes() {
 		List<ContactType> contactTypes = new ArrayList<ContactType>();
-		ObjectInputStream in;
+		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
 			contactTypes = (ArrayList<ContactType>) in.readObject();
-			in.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -135,76 +158,294 @@ public class BinaryFacade implements PersistenceFacade {
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		return contactTypes;
 	} // getContactTypes
 
 	@Override
 	public void insertCall(Call call) {
-		ObjectOutputStream out;
+		ObjectOutputStream out = null;
+		ObjectInputStream in = null;
+		List<Call> allCalls;
 		try {
+			// Recover all the data we have stored
+			in = new ObjectInputStream(new FileInputStream(calls));
+			allCalls = (ArrayList<Call>) in.readObject();
+			// Insert the new data again
+			allCalls.add(call);
 			out = new ObjectOutputStream(new FileOutputStream(calls));
-			out.writeObject(call);
-			out.close();
+			out.writeObject(allCalls);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 	} // insertCall
 
 	@Override
 	public void insertContact(Contact contact) {
-		ObjectOutputStream out;
+		ObjectOutputStream out = null;
+		ObjectInputStream in = null;
+		List<Contact> allContacts;
 		try {
+			// Recover all the data we have stored
+			in = new ObjectInputStream(new FileInputStream(calls));
+			allContacts = (ArrayList<Contact>) in.readObject();
+			// Insert the new data again
+			allContacts.add(contact);
 			out = new ObjectOutputStream(new FileOutputStream(contacts));
-			out.writeObject(contact);
-			out.close();
+			out.writeObject(allContacts);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 	} // insertContact
 
 	@Override
 	public void insertContactType(ContactType ct) {
-		ObjectOutputStream out;
+		ObjectOutputStream out = null;
+		ObjectInputStream in = null;
+		List<ContactType> allCT;
 		try {
+			// Recover all the data we have stored
+			in = new ObjectInputStream(new FileInputStream(contactTypes));
+			allCT = (ArrayList<ContactType>) in.readObject();
+			// Insert the new data again
+			allCT.add(ct);
 			out = new ObjectOutputStream(new FileOutputStream(contactTypes));
-			out.writeObject(ct);
-			out.close();
+			out.writeObject(allCT);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 	} // insertContactType
 
 	@Override
 	public void updateCall(Call call) {
-		// TODO Auto-generated method stub
+
+		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
+		boolean contactFound = false;
+		List<Call> allCalls;
+
+		// Read all the contacts
+		try {
+			in = new ObjectInputStream(new FileInputStream(calls));
+			allCalls = (ArrayList<Call>) in.readObject();
+			// Look for a contact with similar ID and
+			// ,if we find it, replace the contact with new information
+			for (int i = 0; i < allCalls.size() && !contactFound; i++) {
+				if (allCalls.get(i).getIdLlamada() == call.getIdLlamada()) {
+					allCalls.remove(i);
+					allCalls.add(i, call);
+					contactFound = true;
+				}
+			}
+
+			// Store the new data again
+			out = new ObjectOutputStream(new FileOutputStream(calls));
+			out.writeObject(allCalls);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 
 	} // updateCall
 
 	@Override
 	public void updateContact(Contact contact) {
-		// TODO Auto-generated method stub
+		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
+		boolean contactFound = false;
+		List<Contact> allContacts;
+
+		// Read all the contacts
+		try {
+			in = new ObjectInputStream(new FileInputStream(contacts));
+			allContacts = (ArrayList<Contact>) in.readObject();
+			// Look for a contact with similar ID and
+			// ,if we find it, replace the contact with new information
+			for (int i = 0; i < allContacts.size() && !contactFound; i++) {
+				if (allContacts.get(i).getIdContacto() == contact
+						.getIdContacto()) {
+					allContacts.remove(i);
+					allContacts.add(i, contact);
+					contactFound = true;
+				}
+			}
+
+			// Store the new data again
+			out = new ObjectOutputStream(new FileOutputStream(contacts));
+			out.writeObject(allContacts);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 
 	} // updateContact
 
 	@Override
 	public void updateContactType(ContactType ct) {
-		// TODO Auto-generated method stub
+		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
+		boolean contactFound = false;
+		List<ContactType> allCT;
+
+		// Read all the contacts
+		try {
+			in = new ObjectInputStream(new FileInputStream(contactTypes));
+			allCT = (ArrayList<ContactType>) in.readObject();
+			// Look for a contact with similar ID and
+			// ,if we find it, replace the contact with new information
+			for (int i = 0; i < allCT.size() && !contactFound; i++) {
+				if (allCT.get(i).getIdTipoContacto() == ct.getIdTipoContacto()) {
+					allCT.remove(i);
+					allCT.add(i, ct);
+					contactFound = true;
+				}
+			}
+
+			// Store the new data again
+			out = new ObjectOutputStream(new FileOutputStream(calls));
+			out.writeObject(allCT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 
 	} // updateContactType
 
