@@ -15,13 +15,19 @@ import ubu.lsi.dms.agenda.modelo.ContactType;
 public class DBFacade implements PersistenceFacade {
 
 	private static final PersistenceFacade instance = new DBFacade();
+	
+	/**
+	 * Almacena la url de conexión a base de datos.
+	 */
+	String urlDB;
 
 	/**
 	 * Constructor de la fachada: hemos impedido su uso para seguir el patrón
 	 * singleton.
+	 * Ahora es un constructor sin visibilidad fuera de la clase.
 	 */
 	private DBFacade() {
-		// Constructor no visible
+		urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 	}
 
 	/**
@@ -39,8 +45,7 @@ public class DBFacade implements PersistenceFacade {
 		// Creamos las sentencias de seleción
 		String getContactBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
 
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		//Creamos unas variables necesarias
 		int idContacto = 0, idTipoContacto = 0;
 		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
 
@@ -103,9 +108,6 @@ public class DBFacade implements PersistenceFacade {
 				" NOMCORREOELECTRONICO, IDTIPOCONTACTO, NOTAS ) " +
 				" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 		
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
-		
 		try {
 			// Obtenemos la conexión a la base de datos
 			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
@@ -153,9 +155,6 @@ public class DBFacade implements PersistenceFacade {
 	public void insertCall(Call call) {
 		// Creamos las sentencias de seleción
 		String insertCallSentence = "insert into llamadas (idllamada, fechallamada, asunto, notas ,idcontacto) values ( ? , ? , ? , ? , ? );";
-
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 		
 		try {
 			// Obtenemos la conexión a la base de datos
@@ -188,10 +187,7 @@ public class DBFacade implements PersistenceFacade {
 	public void insertContactType(ContactType ct) {
 		// Creamos las sentencias de seleción
 		String insertContactTypeSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
-
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
-		
+	
 		try {
 			// Obtenemos la conexión a la base de datos
 			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
@@ -227,9 +223,6 @@ public class DBFacade implements PersistenceFacade {
 				" CARGO = ?, TELEFONOTRABAJO = ?, EXTENSIONTRABAJO = ?, TELEFONOMOVIL = ?, NUMFAX = ?, " +
 				" NOMCORREOELECTRONICO = ?, IDTIPOCONTACTO = ?, NOTAS = ?  " +
 				" where idcontacto = ?";
-		
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 		
 		try {
 			// Obtenemos la conexión a la base de datos
@@ -280,9 +273,6 @@ public class DBFacade implements PersistenceFacade {
 				+ "fechallamada = ?, asunto = ?, notas = ?, " +
 				" where idllamada = ?";
 		
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
-		
 		try {
 			// Obtenemos la conexión a la base de datos
 			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
@@ -320,9 +310,6 @@ public class DBFacade implements PersistenceFacade {
 	public void updateContactType(ContactType ct) {
 		// Creamos las sentencias de seleción
 				String insertCallSentence = "update tiposdecontacto set tipocontacto = ? where idtipocontacto = ?;";
-
-				// Creamos la url de conexión a base de datos
-				String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 				
 				try {
 					// Obtenemos la conexión a la base de datos
@@ -356,8 +343,6 @@ public class DBFacade implements PersistenceFacade {
 		// Creamos las sentencias de seleción
 		String getContactsBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
 
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 		int idContacto = 0, idTipoContacto = 0;
 		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
 
@@ -418,8 +403,6 @@ public class DBFacade implements PersistenceFacade {
 		List<Call> callList = new ArrayList<Call>();
 		// Creamos las sentencias de seleción
 		String contactTypeSentence = "select * from llamadas where idcontacto = ? ";
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 
 		try {
 			// Obtenemos la conexión a la base de datos
@@ -454,8 +437,6 @@ public class DBFacade implements PersistenceFacade {
 		List<ContactType> contactList = new ArrayList<ContactType>();
 		// Creamos las sentencias de seleción
 		String contactTypeSentence = "select * from tiposdecontacto";
-		// Creamos la url de conexión a base de datos
-		String urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 
 		try {
 			// Obtenemos la conexión a la base de datos
