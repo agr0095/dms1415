@@ -16,10 +16,30 @@ public class DBFacade implements PersistenceFacade {
 
 	private static final PersistenceFacade instance = new DBFacade();
 	
-	/**
-	 * Almacena la url de conexión a base de datos.
+	/*
+	 * Datos importantes de la base de datos.
+	 * 
+	 * Primero, la url para la conexión a la base de datos.
+	 * Usuario en dicha BBDD.
+	 * Contraseña para el usuario.
+	 * 
+	 * Nombres descriptivos que almacenan la sentencia correspondiente
+	 * a las diferentes operaciones.
 	 */
-	String urlDB;
+	private final String 
+		urlDB,
+		usuario,
+		contraseña,
+		getContactSentence,
+		getContactsBySurnameSentence, 
+		getContactTypesSentence, 
+		getCallsByContactSentence, 
+		insertContactSentence,
+		insertContactTypeSentence,
+		insertCallSentence,
+		updateContactSentence,
+		updateContactTypeSentence,
+		updateCallSentence;
 
 	/**
 	 * Constructor de la fachada: hemos impedido su uso para seguir el patrón
@@ -28,6 +48,20 @@ public class DBFacade implements PersistenceFacade {
 	 */
 	private DBFacade() {
 		urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
+		usuario = "SA";
+		contraseña = "";
+
+		// Creamos las sentencias de seleción
+		getContactSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
+		insertContactSentence = "insert into contactos (idcontacto, nombre, apellidos, estimado, direccion, ciudad, prov, codpostal, region, pais, nombrecompania, cargo, telefonotrabajo, extensiontrabajo, telefonomovil, numfax, nomcorreoelectronico, idtipocontacto, notas) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+		insertCallSentence = "insert into llamadas (idllamada, fechallamada, asunto, notas ,idcontacto) values ( ? , ? , ? , ? , ? );";
+		insertContactTypeSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
+		updateContactSentence = "update contactos set nombre = ?, apellidos = ?, estimado = ?, direccion = ?, ciudad = ?, prov = ?, codpostal = ?, region = ?, pais = ?, nombrecompania = ?, cargo = ?, telefonotrabajo = ?, extensiontrabajo = ?, telefonomovil = ?, numfax = ?, nomcorreoelectronico = ?, idtipocontacto = ?, notas = ? where idcontacto = ? ";	
+		updateCallSentence = "update contactos set idcontacto = ?, fechallamada = ?, asunto = ?, notas = ?, where idllamada = ?";
+		updateContactTypeSentence = "update tiposdecontacto set tipocontacto = ? where idtipocontacto = ?;";
+		getContactsBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
+		getCallsByContactSentence = "select * from llamadas where idcontacto = ? ";
+		getContactTypesSentence = "select * from tiposdecontacto";
 	}
 
 	/**
@@ -42,22 +76,18 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public Contact getContact(String surname) {
-		// Creamos las sentencias de seleción
-		String getContactBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
 
 		//Creamos unas variables necesarias
 		int idContacto = 0, idTipoContacto = 0;
 		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
 
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
-					.prepareStatement(getContactBySurnameSentence);
-			psContact.setString(1, surname);
-			ResultSet rs = psContact.executeQuery();
+			PreparedStatement ps = conn
+					.prepareStatement(getContactSentence);
+			ps.setString(1, surname);
+			ResultSet rs = ps.executeQuery();
 
 			// Recogemos todos los datos necesarios para crear el contacto
 			if (rs.next()) {
@@ -84,11 +114,10 @@ public class DBFacade implements PersistenceFacade {
 			}
 			// Cerramos los recursos
 			rs.close();
-			psContact.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 
 		return new Contact(idContacto, nombre, apellidos, estimado, direccion,
@@ -100,239 +129,189 @@ public class DBFacade implements PersistenceFacade {
 
 	@Override
 	public void insertContact(Contact contact) {
-		//Sentencia de inserción
-		String insertContactSentence = "insert into contactos " +
-				" ( IDCONTACTO, NOMBRE, APELLIDOS, ESTIMADO, DIRECCION, " +
-				" CIUDAD, PROV, CODPOSTAL, REGION, PAIS, NOMBRECOMPANIA, " +
-				" CARGO, TELEFONOTRABAJO, EXTENSIONTRABAJO, TELEFONOMOVIL, NUMFAX, " +
-				" NOMCORREOELECTRONICO, IDTIPOCONTACTO, NOTAS ) " +
-				" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 		
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
+			PreparedStatement ps = conn
 					.prepareStatement(insertContactSentence);
 			
 			// Establecemos los parámetros de la inserción
-			psContact.setInt(1, contact.getIdContacto());
-			psContact.setString(2, contact.getNombre());
-			psContact.setString(3, contact.getApellidos());
-			psContact.setString(4, contact.getEstimado());
-			psContact.setString(5, contact.getDireccion());
-			psContact.setString(6, contact.getCiudad());
-			psContact.setString(7, contact.getProv());
-			psContact.setString(8, contact.getCodPostal());
-			psContact.setString(9, contact.getRegion());
-			psContact.setString(10, contact.getPais());
-			psContact.setString(11, contact.getNombreCompania());
-			psContact.setString(12, contact.getCargo());
-			psContact.setString(13, contact.getTelefonoTrabajo());
-			psContact.setString(14, contact.getExtensionTrabajo());
-			psContact.setString(15, contact.getTelefonoMovil());
-			psContact.setString(16, contact.getNumFax());
-			psContact.setString(17, contact.getNomCorreoElectronico());
-			psContact.setInt(18, contact.getTipoContacto().getIdTipoContacto());
-			psContact.setString(19, contact.getNotas());
+			ps.setInt(1, contact.getIdContacto());
+			ps.setString(2, contact.getNombre());
+			ps.setString(3, contact.getApellidos());
+			ps.setString(4, contact.getEstimado());
+			ps.setString(5, contact.getDireccion());
+			ps.setString(6, contact.getCiudad());
+			ps.setString(7, contact.getProv());
+			ps.setString(8, contact.getCodPostal());
+			ps.setString(9, contact.getRegion());
+			ps.setString(10, contact.getPais());
+			ps.setString(11, contact.getNombreCompania());
+			ps.setString(12, contact.getCargo());
+			ps.setString(13, contact.getTelefonoTrabajo());
+			ps.setString(14, contact.getExtensionTrabajo());
+			ps.setString(15, contact.getTelefonoMovil());
+			ps.setString(16, contact.getNumFax());
+			ps.setString(17, contact.getNomCorreoElectronico());
+			ps.setInt(18, contact.getTipoContacto().getIdTipoContacto());
+			ps.setString(19, contact.getNotas());
 
 			//Comprobamos que la actualización haya sido exitosa.
-			if (psContact.executeUpdate() == 0) {
+			if (ps.executeUpdate() == 0) {
 				new SQLException("No se han producido inserciones!");
 			}
 
 			// Cerramos los recursos
-			psContact.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 	}
 
 	@Override
 	public void insertCall(Call call) {
-		// Creamos las sentencias de seleción
-		String insertCallSentence = "insert into llamadas (idllamada, fechallamada, asunto, notas ,idcontacto) values ( ? , ? , ? , ? , ? );";
 		
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
+			PreparedStatement ps = conn
 					.prepareStatement(insertCallSentence);
+			
 			// Establecemos los parámetros de la inserción
-			psContact.setInt(1, call.getIdLlamada());
-			psContact.setString(2,call.getFechaLlamada());
-			psContact.setString(3, call.getAsunto());
-			psContact.setString(4, call.getNotas());
-			psContact.setInt(5, call.getContacto().getIdContacto());
+			ps.setInt(1, call.getIdLlamada());
+			ps.setString(2,call.getFechaLlamada());
+			ps.setString(3, call.getAsunto());
+			ps.setString(4, call.getNotas());
+			ps.setInt(5, call.getContacto().getIdContacto());
 
-			if (psContact.executeUpdate() == 0) {
+			if (ps.executeUpdate() == 0) {
 				new SQLException("No se han producido inserciones!");
 			}
 
 			// Cerramos los recursos
-			psContact.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 	}
 
 	@Override
 	public void insertContactType(ContactType ct) {
-		// Creamos las sentencias de seleción
-		String insertContactTypeSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
 	
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
+			PreparedStatement ps = conn
 					.prepareStatement(insertContactTypeSentence);
 			
 			// Establecemos los parámetros de la inserción
-			psContact.setInt(1, ct.getIdTipoContacto());
-			psContact.setString(2, ct.getTipoContacto());
+			ps.setInt(1, ct.getIdTipoContacto());
+			ps.setString(2, ct.getTipoContacto());
 
-			if (psContact.executeUpdate() == 0) {
+			if (ps.executeUpdate() == 0)
 				new SQLException("No se han producido inserciones!");
-			}
 
 			// Cerramos los recursos
-			psContact.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 
 	}
 
 	@Override
 	public void updateContact(Contact contact) {
-		//Sentencia de inserción
-		String insertContactSentence = "update contactos set NOMBRE = ?, "
-				+ "APELLIDOS = ?, ESTIMADO = ?, DIRECCION = ?, " +
-				" CIUDAD = ?, PROV = ?, CODPOSTAL = ?, REGION = ?, PAIS = ?, NOMBRECOMPANIA = ?, " +
-				" CARGO = ?, TELEFONOTRABAJO = ?, EXTENSIONTRABAJO = ?, TELEFONOMOVIL = ?, NUMFAX = ?, " +
-				" NOMCORREOELECTRONICO = ?, IDTIPOCONTACTO = ?, NOTAS = ?  " +
-				" where idcontacto = ?";
 		
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
-					.prepareStatement(insertContactSentence);
+			PreparedStatement ps = conn
+					.prepareStatement(updateContactSentence);
 			
 			// Establecemos los parámetros de la inserción
-			psContact.setString(1, contact.getNombre());
-			psContact.setString(2, contact.getApellidos());
-			psContact.setString(3, contact.getEstimado());
-			psContact.setString(4, contact.getDireccion());
-			psContact.setString(5, contact.getCiudad());
-			psContact.setString(6, contact.getProv());
-			psContact.setString(7, contact.getCodPostal());
-			psContact.setString(8, contact.getRegion());
-			psContact.setString(9, contact.getPais());
-			psContact.setString(10, contact.getNombreCompania());
-			psContact.setString(11, contact.getCargo());
-			psContact.setString(12, contact.getTelefonoTrabajo());
-			psContact.setString(13, contact.getExtensionTrabajo());
-			psContact.setString(14, contact.getTelefonoMovil());
-			psContact.setString(15, contact.getNumFax());
-			psContact.setString(16, contact.getNomCorreoElectronico());
-			psContact.setInt(17, contact.getTipoContacto().getIdTipoContacto());
-			psContact.setString(18, contact.getNotas());
-			psContact.setInt(19, contact.getIdContacto());
+			ps.setString(1, contact.getNombre());
+			ps.setString(2, contact.getApellidos());
+			ps.setString(3, contact.getEstimado());
+			ps.setString(4, contact.getDireccion());
+			ps.setString(5, contact.getCiudad());
+			ps.setString(6, contact.getProv());
+			ps.setString(7, contact.getCodPostal());
+			ps.setString(8, contact.getRegion());
+			ps.setString(9, contact.getPais());
+			ps.setString(10, contact.getNombreCompania());
+			ps.setString(11, contact.getCargo());
+			ps.setString(12, contact.getTelefonoTrabajo());
+			ps.setString(13, contact.getExtensionTrabajo());
+			ps.setString(14, contact.getTelefonoMovil());
+			ps.setString(15, contact.getNumFax());
+			ps.setString(16, contact.getNomCorreoElectronico());
+			ps.setInt(17, contact.getTipoContacto().getIdTipoContacto());
+			ps.setString(18, contact.getNotas());
+			ps.setInt(19, contact.getIdContacto());
 
 			//Comprobamos que la actualización haya sido exitosa.
-			if (psContact.executeUpdate() == 0) {
+			if (ps.executeUpdate() == 0) {
 				new SQLException("No se han producido inserciones!");
 			}
 
 			// Cerramos los recursos
-			psContact.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 	}
 
 	@Override
 	public void updateCall(Call call) {
-		String insertCallSentence = "update contactos set idcontacto = ?, "
-				+ "fechallamada = ?, asunto = ?, notas = ?, " +
-				" where idllamada = ?";
 		
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psCall = conn
-					.prepareStatement(insertCallSentence);
+			PreparedStatement ps = conn
+					.prepareStatement(updateCallSentence);
 			
 			// Establecemos los parámetros de la inserción
-			psCall.setInt(1, call.getContacto().getIdContacto());
-			psCall.setString(2, call.getFechaLlamada());
-			psCall.setString(3, call.getAsunto());
-			psCall.setString(4, call.getNotas());
-			psCall.setInt(5, call.getIdLlamada());
+			ps.setInt(1, call.getContacto().getIdContacto());
+			ps.setString(2, call.getFechaLlamada());
+			ps.setString(3, call.getAsunto());
+			ps.setString(4, call.getNotas());
+			ps.setInt(5, call.getIdLlamada());
 		
 			//Comprobamos que la actualización haya sido exitosa.
-			if (psCall.executeUpdate() == 0) {
+			if (ps.executeUpdate() == 0) {
 				new SQLException("No se ha podido actualizar la llamada");
 			}
 
 			// Cerramos los recursos
-			psCall.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 	}
 
-	
-
-	
-
 	@Override
 	public void updateContactType(ContactType ct) {
-		// Creamos las sentencias de seleción
-				String insertCallSentence = "update tiposdecontacto set tipocontacto = ? where idtipocontacto = ?;";
 				
-				try {
-					// Obtenemos la conexión a la base de datos
-					Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+				try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 					// Preparamos la sentencia y la ejecutamos
-					PreparedStatement psContact = conn
-							.prepareStatement(insertCallSentence);
+					PreparedStatement ps = conn
+							.prepareStatement(updateContactTypeSentence);
 					
 					// Establecemos los parámetros de la inserción
-					psContact.setString(1, ct.getTipoContacto());
-					psContact.setInt(2, ct.getIdTipoContacto());
+					ps.setString(1, ct.getTipoContacto());
+					ps.setInt(2, ct.getIdTipoContacto());
 
-					if (psContact.executeUpdate() == 0) {
+					if (ps.executeUpdate() == 0) {
 						new SQLException("No se han producido inserciones!");
 					}
 
 					// Cerramos los recursos
-					psContact.close();
-					conn.close();
+					ps.close();
 
 				} catch (SQLException ex) {
-					ex.printStackTrace();
+					System.err.println(ex.getMessage());
 				}
 	}
 
@@ -340,21 +319,16 @@ public class DBFacade implements PersistenceFacade {
 	public List<Contact> getContactsBySurname(String surname) {
 		// Creamos la lista que posteriormente vamos a llena
 		List<Contact> contactList = new ArrayList<Contact>();
-		// Creamos las sentencias de seleción
-		String getContactsBySurnameSentence = "select * from contactos join tiposdecontacto using (idtipocontacto) where apellidos = ?";
 
 		int idContacto = 0, idTipoContacto = 0;
 		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
 
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
+			PreparedStatement ps = conn
 					.prepareStatement(getContactsBySurnameSentence);
-			psContact.setString(1, surname);
-			ResultSet rs = psContact.executeQuery();
+			ps.setString(1, surname);
+			ResultSet rs = ps.executeQuery();
 
 			// Recogemos todos los datos necesarios para crear el contacto
 			while (rs.next()) {
@@ -387,11 +361,10 @@ public class DBFacade implements PersistenceFacade {
 			}
 			// Cerramos los recursos
 			rs.close();
-			psContact.close();
-			conn.close();
+			ps.close();
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 
 		return contactList;
@@ -401,18 +374,13 @@ public class DBFacade implements PersistenceFacade {
 	public List<Call> getCallsByContact(Contact contacto) {
 		// Creamos una lista para meter los tipos de contacto
 		List<Call> callList = new ArrayList<Call>();
-		// Creamos las sentencias de seleción
-		String contactTypeSentence = "select * from llamadas where idcontacto = ? ";
 
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
-					.prepareStatement(contactTypeSentence);
-			psContact.setInt(1, contacto.getIdContacto());
-			ResultSet rs = psContact.executeQuery();
+			PreparedStatement ps = conn
+					.prepareStatement(getCallsByContactSentence);
+			ps.setInt(1, contacto.getIdContacto());
+			ResultSet rs = ps.executeQuery();
 
 			// Añadimos todos los tipos de contacto a la lista
 			while (rs.next()) {
@@ -421,11 +389,12 @@ public class DBFacade implements PersistenceFacade {
 						.getString("notas")));
 			}
 
+			//Cerramos los recursos
 			rs.close();
-			psContact.close();
-			conn.close();
+			ps.close();
+			
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 
 		return callList;
@@ -435,47 +404,28 @@ public class DBFacade implements PersistenceFacade {
 	public List<ContactType> getContactTypes() {
 		// Creamos una lista para meter los tipos de contacto
 		List<ContactType> contactList = new ArrayList<ContactType>();
-		// Creamos las sentencias de seleción
-		String contactTypeSentence = "select * from tiposdecontacto";
 
-		try {
-			// Obtenemos la conexión a la base de datos
-			Connection conn = DriverManager.getConnection(urlDB, "SA", "");
-
+		try (Connection conn = DriverManager.getConnection(urlDB, usuario, contraseña)){
 			// Preparamos la sentencia y la ejecutamos
-			PreparedStatement psContact = conn
-					.prepareStatement(contactTypeSentence);
-			ResultSet rs = psContact.executeQuery();
+			PreparedStatement ps = conn
+					.prepareStatement(getContactTypesSentence);
+			ResultSet rs = ps.executeQuery();
 
 			// Añadimos todos los tipos de contacto a la lista
 			while (rs.next()) {
 				contactList.add(new ContactType(rs.getInt("idtipocontacto"), rs
 						.getString("tipocontacto")));
 			}
+			
+			//Cerramos los recursos
 			rs.close();
-			psContact.close();
-			conn.close();
+			ps.close();
+			
 		} catch (SQLException ex) {
-			ex.printStackTrace();
+			System.err.println(ex.getMessage());
 		}
 
 		return contactList;
-	}// Aquí debería haber una línea
-
-	public static void main(String args[]) {
-		DBFacade dbf = new DBFacade();
-		PersistenceFacade pf = dbf.getInstance();
-		ContactType ct = new ContactType( 12, "nuevotipocontacto");
-		Contact contacto = new Contact(1, "capullo", "mactetis",
-				"no-estimado", "calle penose, nº5", "pucela", "pucela",
-				"09999", "espanistan", "europa", "ruinedcompany", "president",
-				null, null, null, null, null,null, new ContactType(13, "tipo"));
-//		System.out.println(pf.getCallsByContact(contacto));
-//		pf.insertCall(new Call(46, contacto, "2014-10-18 02:00:00", "ninguno","sin notas"));
-		//pf.insertContactType(ct);
-		//pf.insertContact(contacto);
-		//pf.updateContactType(ct);
-		pf.updateContact(contacto);
 	}
 
 }
