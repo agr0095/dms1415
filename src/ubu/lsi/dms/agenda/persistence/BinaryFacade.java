@@ -14,6 +14,7 @@ import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
 
+@SuppressWarnings("unchecked")
 public class BinaryFacade implements PersistenceFacade {
 
 	// Instancia de la propia clase
@@ -217,23 +218,17 @@ public class BinaryFacade implements PersistenceFacade {
 	public void insertContact(Contact contact) {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
-		List<Contact> allContacts;
+//		List<Contact> allContacts;
 		try {
 			// Recover all the data we have stored
-			in = new ObjectInputStream(new FileInputStream(calls));
-			allContacts = (ArrayList<Contact>) in.readObject();
-			// Insert the new data again
-			allContacts.add(contact);
+			
 			out = new ObjectOutputStream(new FileOutputStream(contacts));
-			out.writeObject(allContacts);
+			out.writeObject(contact);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
@@ -259,23 +254,15 @@ public class BinaryFacade implements PersistenceFacade {
 	public void insertContactType(ContactType ct) {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
-		List<ContactType> allCT;
+
 		try {
-			// Recover all the data we have stored
-			in = new ObjectInputStream(new FileInputStream(contactTypes));
-			allCT = (ArrayList<ContactType>) in.readObject();
-			// Insert the new data again
-			allCT.add(ct);
 			out = new ObjectOutputStream(new FileOutputStream(contactTypes));
-			out.writeObject(allCT);
+			out.writeObject(ct);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
