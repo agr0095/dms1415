@@ -29,6 +29,10 @@ public class CommonData {
 		contactTypeList = new ArrayList<ContactType>();
 		
 		for(int i=1; i<=50; i++){
+			switch(i){
+			case 1-9:
+				System.out.println("Entro con "+i);
+			}
 			//Creamos un string para formaterar el número de 0
 			String letra = null;
 			if(i>=1 && i<=9){
