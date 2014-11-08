@@ -47,10 +47,7 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(calls));
-			callList = (ArrayList<Call>) in.readObject();
-		} catch (ClassNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
+			callList = loadCalls();
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -111,13 +108,12 @@ public class BinaryFacade implements PersistenceFacade {
 	@Override
 	public List<Contact> getContactsBySurname(String surname) {
 		List<Contact> contactList = new ArrayList<Contact>();
+		List<Contact> contactsBySurname = new ArrayList<Contact>();
 		ObjectInputStream in = null;
+		
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
-			contactList = (ArrayList<Contact>) in.readObject();
-		} catch (ClassNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
+			contactList = loadContacts();
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -134,12 +130,11 @@ public class BinaryFacade implements PersistenceFacade {
 			}
 
 		}
-
-		List<Contact> contactsBySurname = new ArrayList<Contact>();
 		for (Contact c : contactList)
 
 			if (c.getApellidos().compareTo(surname) == 0)
 				contactsBySurname.add(c);
+		
 		return contactsBySurname;
 	} // getContactsBySurname
 
@@ -149,10 +144,7 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
-			contactTypes = (ArrayList<ContactType>) in.readObject();
-		} catch (ClassNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
+			contactTypes = loadContactTypes();
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -176,23 +168,19 @@ public class BinaryFacade implements PersistenceFacade {
 	public void insertCall(Call call) {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
-		List<Call> allCalls;
+		List<Call> allCalls=new ArrayList<Call>();
 		try {
-			// Recover all the data we have stored
-			in = new ObjectInputStream(new FileInputStream(calls));
-			allCalls = (ArrayList<Call>) in.readObject();
-			// Insert the new data again
-			allCalls.add(call);
+			if (calls.exists())
+				// Take everything from the files
+				allCalls = loadCalls();
 			out = new ObjectOutputStream(new FileOutputStream(calls));
+			allCalls.add(call);
 			out.writeObject(allCalls);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
@@ -214,16 +202,42 @@ public class BinaryFacade implements PersistenceFacade {
 
 	} // insertCall
 
+	private List<Call> loadCalls() {
+		List<Call> allCalls = new ArrayList<Call>();
+		ObjectInputStream in = null;
+
+		try {
+			in = new ObjectInputStream(new FileInputStream(calls));		
+			allCalls =(ArrayList<Call>) in.readObject();
+
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return allCalls;
+	}
+
 	@Override
 	public void insertContact(Contact contact) {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
-//		List<Contact> allContacts;
+		List<Contact> allContacts=new ArrayList<Contact>();
+		
 		try {
-			// Recover all the data we have stored
-			
+			if (contacts.exists())
+				// Take everything from the files
+				allContacts = loadContacts();
 			out = new ObjectOutputStream(new FileOutputStream(contacts));
-			out.writeObject(contact);
+			allContacts.add(contact);
+			out.writeObject(allContacts);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -250,14 +264,44 @@ public class BinaryFacade implements PersistenceFacade {
 
 	} // insertContact
 
+	private List<Contact> loadContacts() {
+		List<Contact> allContacts = new ArrayList<Contact>();
+		ObjectInputStream in = null;
+
+		try {
+			in = new ObjectInputStream(new FileInputStream(contacts));
+			allContacts =(ArrayList<Contact>) in.readObject();
+
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return allContacts;
+	}
+	
+	
+	
 	@Override
 	public void insertContactType(ContactType ct) {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
-
+		List<ContactType> allCT=new ArrayList<ContactType>();
+		
 		try {
+			if (contactTypes.exists())
+				// Take everything from the files
+				allCT = loadContactTypes();
 			out = new ObjectOutputStream(new FileOutputStream(contactTypes));
-			out.writeObject(ct);
+			allCT.add(ct);
+			out.writeObject(allCT);
 		} catch (FileNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -283,6 +327,30 @@ public class BinaryFacade implements PersistenceFacade {
 		}
 
 	} // insertContactType
+	
+	private List<ContactType> loadContactTypes() {
+		List<ContactType> allCT = new ArrayList<ContactType>();
+		ObjectInputStream in = null;
+
+		try {
+			in = new ObjectInputStream(new FileInputStream(contactTypes));
+
+			allCT =(ArrayList<ContactType>) in.readObject();
+
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return allCT;
+	}
 
 	@Override
 	public void updateCall(Call call) {
@@ -290,32 +358,31 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
 		boolean contactFound = false;
-		List<Call> allCalls;
+		List<Call> allCalls = new ArrayList<Call>();
 
 		// Read all the contacts
 		try {
-			in = new ObjectInputStream(new FileInputStream(calls));
-			allCalls = (ArrayList<Call>) in.readObject();
-			// Look for a contact with similar ID and
-			// ,if we find it, replace the contact with new information
-			for (int i = 0; i < allCalls.size() && !contactFound; i++) {
-				if (allCalls.get(i).getIdLlamada() == call.getIdLlamada()) {
-					allCalls.remove(i);
-					allCalls.add(i, call);
-					contactFound = true;
+			if (calls.exists()) {
+				in = new ObjectInputStream(new FileInputStream(calls));
+				allCalls = loadCalls();
+				// Look for a contact with similar ID and
+				// ,if we find it, replace the contact with new information
+				for (int i = 0; i < allCalls.size() && !contactFound; i++) {
+					if (allCalls.get(i).getIdLlamada() == call.getIdLlamada()) {
+						allCalls.remove(i);
+						allCalls.add(i, call);
+						contactFound = true;
+					}
 				}
-			}
 
-			// Store the new data again
-			out = new ObjectOutputStream(new FileOutputStream(calls));
-			out.writeObject(allCalls);
+				// Store the new data again
+				out = new ObjectOutputStream(new FileOutputStream(calls));
+				out.writeObject(allCalls);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+		}finally {
 			try {
 				if (in != null)
 					in.close();
@@ -345,7 +412,7 @@ public class BinaryFacade implements PersistenceFacade {
 		// Read all the contacts
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
-			allContacts = (ArrayList<Contact>) in.readObject();
+			allContacts = loadContacts();
 			// Look for a contact with similar ID and
 			// ,if we find it, replace the contact with new information
 			for (int i = 0; i < allContacts.size() && !contactFound; i++) {
@@ -361,9 +428,6 @@ public class BinaryFacade implements PersistenceFacade {
 			out = new ObjectOutputStream(new FileOutputStream(contacts));
 			out.writeObject(allContacts);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -396,7 +460,7 @@ public class BinaryFacade implements PersistenceFacade {
 		// Read all the contacts
 		try {
 			in = new ObjectInputStream(new FileInputStream(contactTypes));
-			allCT = (ArrayList<ContactType>) in.readObject();
+			allCT = loadContactTypes();
 			// Look for a contact with similar ID and
 			// ,if we find it, replace the contact with new information
 			for (int i = 0; i < allCT.size() && !contactFound; i++) {
@@ -408,15 +472,12 @@ public class BinaryFacade implements PersistenceFacade {
 			}
 
 			// Store the new data again
-			out = new ObjectOutputStream(new FileOutputStream(calls));
+			out = new ObjectOutputStream(new FileOutputStream(contactTypes));
 			out.writeObject(allCT);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+		}finally {
 			try {
 				if (in != null)
 					in.close();
