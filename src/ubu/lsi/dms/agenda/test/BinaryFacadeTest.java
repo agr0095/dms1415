@@ -17,17 +17,21 @@ import ubu.lsi.dms.agenda.persistence.BinaryFacade;
  * Clase que contiene tests para probar la persistencia con ficheros binarios.
  * 
  * @author Plamen Petkov
- *
+ * 
  */
 public class BinaryFacadeTest {
 
 	static CommonData data = CommonData.getInstance();
 	static BinaryFacade facade = (BinaryFacade) BinaryFacade.getInstance();
+	static File[] files = { new File(".\\rsc\\calls.dat"),
+			new File(".\\rsc\\contacts.dat"),
+			new File(".\\rsc\\contactTypes.dat") };
 
 	public static void main(String args[]) {
-
+		
+//		removeFiles();
 		// testGet();
-		 testInsert();
+		testInsert();
 		// testUpdate();
 
 	}
@@ -36,10 +40,8 @@ public class BinaryFacadeTest {
 		System.out.println("Get test OK");
 	}
 
-	@SuppressWarnings({ "unchecked", "resource" })
 	private static void testInsert() {
 
-		ObjectInputStream input = null;
 		List<Object> objects = new ArrayList<Object>();
 
 		List<Call> calls = data.getCallList();
@@ -54,41 +56,15 @@ public class BinaryFacadeTest {
 
 		for (ContactType ct : contactTypes)
 			facade.insertContactType(ct);
-
-		try {
-			input = new ObjectInputStream(new FileInputStream(
-					".\\rsc\\calls.dat"));
-			objects = (List<Object>) input.readObject();
-			// Postcondicion: número de llamadas insertadas igual al número de
-			// objetos recuperados
-			assert calls.size() == objects.size();
-
-			input = new ObjectInputStream(new FileInputStream(
-					".\\rsc\\contacts.dat"));
-			objects = (List<Object>) input.readObject();
-			// Postcondicion: número de contactos insertados igual al número de
-			// objetos recuperados
-			assert contacts.size() == objects.size();
-
-			input = new ObjectInputStream(new FileInputStream(
-					".\\rsc\\contactTypes.dat"));
-			objects = (List<Object>) input.readObject();
-			// Postcondicion: número de tipos insertados igual al número de
-			// objetos recuperados
-			assert contactTypes.size() == objects.size();
-
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
+		
+		loadFile(files[0], objects);
+		assert calls.size() == objects.size();
+		
+		loadFile(files[1], objects);
+		assert contacts.size() == objects.size();
+		
+		loadFile(files[2], objects);
+		assert contactTypes.size() == objects.size();
 
 		System.out.println("Insert test OK");
 
@@ -98,5 +74,29 @@ public class BinaryFacadeTest {
 		// TODO
 		System.out.println("Update test OK");
 	} // testUpdate
+
+	/**
+	 * Elimina los archivos de persistencia en caso de que existan.
+	 */
+	private static void removeFiles() {
+		for (File file : files)
+			if (file.exists())
+				file.delete();
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void loadFile(File file, List<Object> list) {
+		ObjectInputStream input = null;
+		try {
+			input = new ObjectInputStream(new FileInputStream(file));
+			list = (List<Object>) input.readObject();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
