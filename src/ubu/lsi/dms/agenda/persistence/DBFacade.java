@@ -57,7 +57,7 @@ public class DBFacade implements PersistenceFacade {
 		insertCallSentence = "insert into llamadas (idllamada, fechallamada, asunto, notas ,idcontacto) values ( ? , ? , ? , ? , ? );";
 		insertContactTypeSentence = "insert into tiposdecontacto (idtipocontacto, tipocontacto) values ( ? , ? );";
 		updateContactSentence = "update contactos set nombre = ?, apellidos = ?, estimado = ?, direccion = ?, ciudad = ?, prov = ?, codpostal = ?, region = ?, pais = ?, nombrecompania = ?, cargo = ?, telefonotrabajo = ?, extensiontrabajo = ?, telefonomovil = ?, numfax = ?, nomcorreoelectronico = ?, idtipocontacto = ?, notas = ? where idcontacto = ? ";	
-		updateCallSentence = "update contactos set idcontacto = ?, fechallamada = ?, asunto = ?, notas = ?, where idllamada = ?";
+		updateCallSentence = "update llamadas set idcontacto = ?, fechallamada = ?, asunto = ?, notas = ? where idllamada = ?";
 		updateContactTypeSentence = "update tiposdecontacto set tipocontacto = ? where idtipocontacto = ?;";
 		getContactsBySurnameSentence = "select * from contactos left join tiposdecontacto using (idtipocontacto) where apellidos = ?";
 		getCallsByContactSentence = "select * from llamadas where idcontacto = ? ";
