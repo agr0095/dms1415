@@ -28,7 +28,7 @@ public class CommonData {
 		callList = new ArrayList<Call>();
 		contactTypeList = new ArrayList<ContactType>();
 		
-		for(int i=1; i<=50; i++){
+		for(int i=1; i<=10; i++){
 			switch(i){
 			case 1-9:
 				System.out.println("Entro con "+i);
@@ -45,7 +45,7 @@ public class CommonData {
 			//Creamos un contacto, una llamada y un tipo de contacto
 			ContactType contactType = new ContactType(i, "TipoDeContacto" + letra);
 			Contact contact = new Contact(i, "Nombre" + letra, "Apellidos" + letra, "Estimado" + letra, "Direccion" + letra, "Ciudad" + letra, "Prov" + letra, "CodProv" + letra, "Region" + letra, "Pais" + letra, "NombreCompania" + letra, "Cargo" + letra, "TelefonoTrabajo" + letra, "ExtensionTrabajo" + letra, "TelefonoMovil" + letra, "NumFax" + letra, "NomCorreoElectronico" + letra, "Notas" + letra, contactType);
-			Call call = new Call(i, contact, "FechaLlamada" + letra, "Asunto" + letra, "Notas" + letra);
+			Call call = new Call(i, contact, "2014-10-18 01:00:00", "Asunto" + letra, "Notas" + letra);
 			
 			contactList.add(contact);
 			callList.add(call);
