@@ -100,4 +100,40 @@ public class Call implements Serializable {
 				+ ", notas=" + notas + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Call other = (Call) obj;
+		if (asunto == null) {
+			if (other.asunto != null)
+				return false;
+		} else if (!asunto.equals(other.asunto))
+			return false;
+		if (contacto == null) {
+			if (other.contacto != null)
+				return false;
+		} else if (!contacto.equals(other.contacto))
+			return false;
+		if (fechaLlamada == null) {
+			if (other.fechaLlamada != null)
+				return false;
+		} else if (!fechaLlamada.equals(other.fechaLlamada))
+			return false;
+		if (idLlamada != other.idLlamada)
+			return false;
+		if (notas == null) {
+			if (other.notas != null)
+				return false;
+		} else if (!notas.equals(other.notas))
+			return false;
+		return true;
+	}
+	
+
+
 }
