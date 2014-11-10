@@ -26,27 +26,67 @@ public class BinaryFacadeTest {
 	static File[] files = { new File(".\\rsc\\calls.dat"),
 			new File(".\\rsc\\contacts.dat"),
 			new File(".\\rsc\\contactTypes.dat") };
+	// Datos de prueba obtenidos de la clase CommonData
+	static List<Call> calls = data.getCallList();
+	static List<Contact> contacts = data.getContactList();
+	static List<ContactType> contactTypes = data.getContactTypeList();
+	
 
 	public static void main(String args[]) {
-		
-//		removeFiles();
-		// testGet();
+
+		removeFiles();
+
 		testInsert();
-		// testUpdate();
+		testGet();
+		testUpdate();
+		System.out.println("All tests concluded successfully!");
 
 	}
 
 	private static void testGet() {
+
+		List<Call> callsByContact;
+		List<ContactType> listOfCT;
+		List<Contact> contactsBySurname;
+
+		
+		// Pruebas de getCallsByContact
+		callsByContact = facade.getCallsByContact(contacts.get(0));
+		assert callsByContact.size() == 1;
+		callsByContact = facade.getCallsByContact(new Contact(0, "", "", "",
+				"", "", "", "", "", "", "", "", "", "", "", "", "", "", null));
+		assert callsByContact.size() == 0;
+		
+		// Pruebas de getContact
+		Contact contact = facade.getContact("Apellidos001");
+		assert contact.compareTo(contacts.get(0)) == 0;
+		contact = facade.getContact("Petkov");
+		assert contact == null;
+		
+		// Pruebas de getContactsBySurname
+		contactsBySurname = facade.getContactsBySurname("Apellidos001");
+		assert contactsBySurname.size() == 1;
+		facade.insertContact(new Contact(0, "", "Apellidos001", "",
+				"", "", "", "", "", "", "", "", "", "", "", "", "", "", null));
+		contactsBySurname = facade.getContactsBySurname("Apellidos001");
+		assert contactsBySurname.size() == 2;
+		contactsBySurname = facade.getContactsBySurname("Petkov");
+		assert contactsBySurname.size() == 0;
+		
+		// Pruebas de getContactTypes
+		listOfCT = facade.getContactTypes();
+		assert listOfCT.size() == contactTypes.size();
+		
 		System.out.println("Get test OK");
 	}
 
+	/**
+	 * Prueba los métodos de inertar de la fachada de persistencia binaria.
+	 */
 	private static void testInsert() {
 
-		List<Object> objects = new ArrayList<Object>();
-
-		List<Call> calls = data.getCallList();
-		List<Contact> contacts = data.getContactList();
-		List<ContactType> contactTypes = data.getContactTypeList();
+		// Almacena los objetos de un fichero de persistencia binario
+		List<Object> objects = null;
 
 		for (Call call : calls)
 			facade.insertCall(call);
@@ -56,14 +96,17 @@ public class BinaryFacadeTest {
 
 		for (ContactType ct : contactTypes)
 			facade.insertContactType(ct);
-		
-		loadFile(files[0], objects);
+
+		// files[0] corresponde a rsc/calls.dat
+		objects = loadFile(files[0]);
 		assert calls.size() == objects.size();
-		
-		loadFile(files[1], objects);
+
+		// files[1] corresponde a rsc/contactTypes.dat
+		objects = loadFile(files[1]);
 		assert contacts.size() == objects.size();
-		
-		loadFile(files[2], objects);
+
+		// files[2] corresponde a rsc/contactTypes.dat
+		objects = loadFile(files[2]);
 		assert contactTypes.size() == objects.size();
 
 		System.out.println("Insert test OK");
@@ -82,21 +125,35 @@ public class BinaryFacadeTest {
 		for (File file : files)
 			if (file.exists())
 				file.delete();
-	}
+	} // removeFiles
 
+	/**
+	 * Carga un archivo de persistencia en una lista de objetos.
+	 * 
+	 * @param file
+	 *            el archivo a cargar
+	 * @return lista de objetos
+	 */
 	@SuppressWarnings("unchecked")
-	private static void loadFile(File file, List<Object> list) {
+	private static List<Object> loadFile(File file) {
 		ObjectInputStream input = null;
+		List<Object> list = new ArrayList<Object>();
 		try {
 			input = new ObjectInputStream(new FileInputStream(file));
 			list = (List<Object>) input.readObject();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
-	}
+		return list;
+	} // loadFile
 
-}
+} // class BinaryFacadeTest

@@ -2,7 +2,6 @@ package ubu.lsi.dms.agenda.persistence;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -48,9 +47,6 @@ public class BinaryFacade implements PersistenceFacade {
 		try {
 			in = new ObjectInputStream(new FileInputStream(calls));
 			callList = loadCalls();
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -67,7 +63,7 @@ public class BinaryFacade implements PersistenceFacade {
 
 		List<Call> callsByContact = new ArrayList<Call>();
 		for (Call c : callList)
-			if (c.getContacto().compareTo(contact) == 0)
+			if (c.getContacto().equals(contact))
 				callsByContact.add(c);
 		return callsByContact;
 	} // getCallsByContact
@@ -82,9 +78,6 @@ public class BinaryFacade implements PersistenceFacade {
 		} catch (ClassNotFoundException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -100,7 +93,7 @@ public class BinaryFacade implements PersistenceFacade {
 		}
 
 		for (Contact c : contactList)
-			if (c.getApellidos().compareTo(surname) == 0)
+			if (c.getApellidos().equals(surname))
 				return c;
 		return null;
 	} // getContact
@@ -114,9 +107,6 @@ public class BinaryFacade implements PersistenceFacade {
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
 			contactList = loadContacts();
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -132,7 +122,7 @@ public class BinaryFacade implements PersistenceFacade {
 		}
 		for (Contact c : contactList)
 
-			if (c.getApellidos().compareTo(surname) == 0)
+			if (c.getApellidos().equals(surname))
 				contactsBySurname.add(c);
 		
 		return contactsBySurname;
@@ -145,9 +135,6 @@ public class BinaryFacade implements PersistenceFacade {
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
 			contactTypes = loadContactTypes();
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -176,9 +163,6 @@ public class BinaryFacade implements PersistenceFacade {
 			out = new ObjectOutputStream(new FileOutputStream(calls));
 			allCalls.add(call);
 			out.writeObject(allCalls);
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -238,9 +222,6 @@ public class BinaryFacade implements PersistenceFacade {
 			out = new ObjectOutputStream(new FileOutputStream(contacts));
 			allContacts.add(contact);
 			out.writeObject(allContacts);
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -248,18 +229,13 @@ public class BinaryFacade implements PersistenceFacade {
 			try {
 				if (in != null)
 					in.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
+				
 				if (out != null)
 					out.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
 
 	} // insertContact
@@ -288,7 +264,6 @@ public class BinaryFacade implements PersistenceFacade {
 	}
 	
 	
-	
 	@Override
 	public void insertContactType(ContactType ct) {
 		ObjectOutputStream out = null;
@@ -302,9 +277,6 @@ public class BinaryFacade implements PersistenceFacade {
 			out = new ObjectOutputStream(new FileOutputStream(contactTypes));
 			allCT.add(ct);
 			out.writeObject(allCT);
-		} catch (FileNotFoundException e) {
-			// TODO Se puede utilizar herramienta de logging
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -434,20 +406,14 @@ public class BinaryFacade implements PersistenceFacade {
 			try {
 				if (in != null)
 					in.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
+				
 				if (out != null)
 					out.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
-
 	} // updateContact
 
 	@Override
@@ -481,20 +447,14 @@ public class BinaryFacade implements PersistenceFacade {
 			try {
 				if (in != null)
 					in.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
+				
 				if (out != null)
 					out.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
-
 	} // updateContactType
 
 } // class BinaryFacade
