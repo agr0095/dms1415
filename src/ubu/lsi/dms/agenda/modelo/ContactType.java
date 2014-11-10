@@ -49,6 +49,27 @@ public class ContactType implements Serializable{
 		return "TipoContacto [idTipoContacto=" + idTipoContacto
 				+ ", TipoContacto=" + TipoContacto + "]";
 	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ContactType other = (ContactType) obj;
+		if (TipoContacto == null) {
+			if (other.TipoContacto != null)
+				return false;
+		} else if (!TipoContacto.equals(other.TipoContacto))
+			return false;
+		if (idTipoContacto != other.idTipoContacto)
+			return false;
+		return true;
+	}
+	
 	
 	
 	
