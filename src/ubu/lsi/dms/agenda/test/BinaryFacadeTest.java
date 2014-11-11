@@ -1,11 +1,6 @@
 package ubu.lsi.dms.agenda.test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import ubu.lsi.dms.agenda.modelo.Call;
@@ -26,97 +21,102 @@ public class BinaryFacadeTest {
 	static File[] files = { new File(".\\rsc\\calls.dat"),
 			new File(".\\rsc\\contacts.dat"),
 			new File(".\\rsc\\contactTypes.dat") };
+	
 	// Datos de prueba obtenidos de la clase CommonData
 	static List<Call> calls = data.getCallList();
 	static List<Contact> contacts = data.getContactList();
 	static List<ContactType> contactTypes = data.getContactTypeList();
-	
 
 	public static void main(String args[]) {
 
+		List<ContactType> listOfCTs;
+		List<Contact> listOfContacts;
+		List<Call> listOfCalls;
+
 		removeFiles();
 
-		testInsert();
-		testGet();
-		testUpdate();
-		System.out.println("All tests concluded successfully!");
-
-	}
-
-	private static void testGet() {
-
-		List<Call> callsByContact;
-		List<ContactType> listOfCT;
-		List<Contact> contactsBySurname;
-
-		
-		// Pruebas de getCallsByContact
-		callsByContact = facade.getCallsByContact(contacts.get(0));
-		assert callsByContact.size() == 1;
-		callsByContact = facade.getCallsByContact(new Contact(0, "", "", "",
-				"", "", "", "", "", "", "", "", "", "", "", "", "", "", null));
-		assert callsByContact.size() == 0;
-		
-		// Pruebas de getContact
-		Contact contact = facade.getContact("Apellidos001");
-		assert contact.compareTo(contacts.get(0)) == 0;
-		contact = facade.getContact("Petkov");
-		assert contact == null;
-		
-		// Pruebas de getContactsBySurname
-		contactsBySurname = facade.getContactsBySurname("Apellidos001");
-		assert contactsBySurname.size() == 1;
-		facade.insertContact(new Contact(0, "", "Apellidos001", "",
-				"", "", "", "", "", "", "", "", "", "", "", "", "", "", null));
-		contactsBySurname = facade.getContactsBySurname("Apellidos001");
-		assert contactsBySurname.size() == 2;
-		contactsBySurname = facade.getContactsBySurname("Petkov");
-		assert contactsBySurname.size() == 0;
-		
-		// Pruebas de getContactTypes
-		listOfCT = facade.getContactTypes();
-		assert listOfCT.size() == contactTypes.size();
-		
-		System.out.println("Get test OK");
-	}
-
-	/**
-	 * Prueba los métodos de inertar de la fachada de persistencia binaria.
-	 */
-	private static void testInsert() {
-
-		// Almacena los objetos de un fichero de persistencia binario
-		List<Object> objects = null;
-
+		/*
+		 * Test para los metodos de la fachada que trabajan con la clase Call
+		 */
+		// Inserta las llamadas de la lista de datos
 		for (Call call : calls)
 			facade.insertCall(call);
 
-		for (Contact contact : contacts)
-			facade.insertContact(contact);
+		// Obtiene las llamadas del primer contacto de la lista de datos
+		assert facade.getCallsByContact(contacts.get(0)).size() == 1;
 
+		// Actualiza las llamadas cambiando el contacto de cada llamada por el
+		// segundo contacto de la lista de datos
+		for (Call call : calls) {
+			Call newCall = new Call(call.getIdLlamada(), contacts.get(1), "",
+					"", "");
+			facade.updateCall(newCall);
+		}
+		
+		// Obtiene las llamadas del segundo contacto de la lista de datos
+		// Comprueba que el numero de llamadas obtenidas es igual al numero total de llamadas
+		// Comprueba que el numero de llamadas del primer contacto de la lista es 0
+		listOfCalls = facade.getCallsByContact(contacts.get(1));
+		assert listOfCalls.size() == calls.size();
+		assert facade.getCallsByContact(contacts.get(0)).size() == 0;
+
+		/*
+		 * Tests para los metodos de la fachada que trabajan con la clase
+		 * ContactType
+		 */
+		// Inserta los tipo de contacto de la lista de datos
 		for (ContactType ct : contactTypes)
 			facade.insertContactType(ct);
 
-		// files[0] corresponde a rsc/calls.dat
-		objects = loadFile(files[0]);
-		assert calls.size() == objects.size();
+		// Obtiene la los tipos de contacto
+		listOfCTs = facade.getContactTypes();
+		// Comprueba que la lista contiene a todos los tipos de contacto
+		// insertados
+		assert listOfCTs.containsAll(contactTypes);
 
-		// files[1] corresponde a rsc/contactTypes.dat
-		objects = loadFile(files[1]);
-		assert contacts.size() == objects.size();
+		// Actualiza un tipo de contacto añadiendo la cadena "updated"
+		for (ContactType ct : listOfCTs)
+			facade.updateContactType(new ContactType(ct.getIdTipoContacto(), ct
+					.getTipoContacto() + "updated"));
 
-		// files[2] corresponde a rsc/contactTypes.dat
-		objects = loadFile(files[2]);
-		assert contactTypes.size() == objects.size();
+		listOfCTs = facade.getContactTypes();
+		// Comprueba que todos los tipos de contacto contienen la cadena
+		// "updated"
+		for (ContactType ct : listOfCTs)
+			assert ct.getTipoContacto().contains("updated");
 
-		System.out.println("Insert test OK");
+		/*
+		 * Tests para los metodos de la fachada que trabajan con la clase
+		 * ContactType
+		 */
+		// Inserta los contactos de la lista de datos
+		for (Contact contact : contacts)
+			facade.insertContact(contact);
 
-	}// testInsert
+		// Obtiene el contacto con apellido Apellidos001 y comprueba que es el
+		// primer contacto insertado (primer contacto de la lista de datos)
+		assert facade.getContact("Apellidos001").equals(contacts.get(0));
+		// Comprueba que no hay contacto con apellido Petkov
+		assert facade.getContact("Petkov") == null;
 
-	private static void testUpdate() {
-		// TODO
-		System.out.println("Update test OK");
-	} // testUpdate
+		// Actualiza los contactos añadiendo los mismos datos a todos los
+		// contactos excepto el idContacto
+		for (Contact contact : contacts) {
+			Contact newContact = new Contact(contact.getIdContacto(),
+					"NombreNuevo", "ApellidosNuevos", "", "", "", "", "", "",
+					"", "", "", "", "", "", "", "", "", null);
+			facade.updateContact(newContact);
+		}
+
+		// Obtiene los contactos con apellido ApellidosNuevos y comprueba que
+		// la lista inicial no contiene ninguno de ellos
+		listOfContacts = facade.getContactsBySurname("ApellidosNuevos");
+		for (Contact contact : listOfContacts)
+			assert !(contacts.contains(contact));
+
+		System.out.println("All tests concluded successfully!");
+
+	} // main
 
 	/**
 	 * Elimina los archivos de persistencia en caso de que existan.
@@ -126,34 +126,5 @@ public class BinaryFacadeTest {
 			if (file.exists())
 				file.delete();
 	} // removeFiles
-
-	/**
-	 * Carga un archivo de persistencia en una lista de objetos.
-	 * 
-	 * @param file
-	 *            el archivo a cargar
-	 * @return lista de objetos
-	 */
-	@SuppressWarnings("unchecked")
-	private static List<Object> loadFile(File file) {
-		ObjectInputStream input = null;
-		List<Object> list = new ArrayList<Object>();
-		try {
-			input = new ObjectInputStream(new FileInputStream(file));
-			list = (List<Object>) input.readObject();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-		return list;
-	} // loadFile
 
 } // class BinaryFacadeTest

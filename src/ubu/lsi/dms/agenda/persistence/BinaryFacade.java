@@ -130,11 +130,11 @@ public class BinaryFacade implements PersistenceFacade {
 
 	@Override
 	public List<ContactType> getContactTypes() {
-		List<ContactType> contactTypes = new ArrayList<ContactType>();
+		List<ContactType> listOfCTs = new ArrayList<ContactType>();
 		ObjectInputStream in = null;
 		try {
-			in = new ObjectInputStream(new FileInputStream(contacts));
-			contactTypes = loadContactTypes();
+			in = new ObjectInputStream(new FileInputStream(contactTypes));
+			listOfCTs = loadContactTypes();
 		} catch (IOException e) {
 			// TODO Se puede utilizar herramienta de logging
 			e.printStackTrace();
@@ -148,7 +148,7 @@ public class BinaryFacade implements PersistenceFacade {
 			}
 
 		}
-		return contactTypes;
+		return listOfCTs;
 	} // getContactTypes
 
 	@Override

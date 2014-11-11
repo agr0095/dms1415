@@ -337,22 +337,107 @@ public class Contact implements Serializable {
 				+ notas + ", tipoContacto=" + tipoContacto + "]";
 	}
 
-	/**
-	 * Compara un contacto con éste contacto La comparación es de los IDs de los
-	 * contactos.
-	 * 
-	 * @param other
-	 *            el contacto con el que comparar éste contacto.
-	 * @return 0 si se trata del mismo contacto, numero negativo (menor que 0)
-	 *         si éste contacto es menor que el otro, numero positivo (mayor que
-	 *         0) si éste contacto es mayor que el otro.
-	 */
-	public int compareTo(Contact other) {
-		if (this.idContacto == other.idContacto)
-			return 0;
-		else if (this.idContacto < other.idContacto)
-			return -2;
-		return 2;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Contact other = (Contact) obj;
+		if (apellidos == null) {
+			if (other.apellidos != null)
+				return false;
+		} else if (!apellidos.equals(other.apellidos))
+			return false;
+		if (cargo == null) {
+			if (other.cargo != null)
+				return false;
+		} else if (!cargo.equals(other.cargo))
+			return false;
+		if (ciudad == null) {
+			if (other.ciudad != null)
+				return false;
+		} else if (!ciudad.equals(other.ciudad))
+			return false;
+		if (codPostal == null) {
+			if (other.codPostal != null)
+				return false;
+		} else if (!codPostal.equals(other.codPostal))
+			return false;
+		if (direccion == null) {
+			if (other.direccion != null)
+				return false;
+		} else if (!direccion.equals(other.direccion))
+			return false;
+		if (estimado == null) {
+			if (other.estimado != null)
+				return false;
+		} else if (!estimado.equals(other.estimado))
+			return false;
+		if (extensionTrabajo == null) {
+			if (other.extensionTrabajo != null)
+				return false;
+		} else if (!extensionTrabajo.equals(other.extensionTrabajo))
+			return false;
+		if (idContacto != other.idContacto)
+			return false;
+		if (nomCorreoElectronico == null) {
+			if (other.nomCorreoElectronico != null)
+				return false;
+		} else if (!nomCorreoElectronico.equals(other.nomCorreoElectronico))
+			return false;
+		if (nombre == null) {
+			if (other.nombre != null)
+				return false;
+		} else if (!nombre.equals(other.nombre))
+			return false;
+		if (nombreCompania == null) {
+			if (other.nombreCompania != null)
+				return false;
+		} else if (!nombreCompania.equals(other.nombreCompania))
+			return false;
+		if (notas == null) {
+			if (other.notas != null)
+				return false;
+		} else if (!notas.equals(other.notas))
+			return false;
+		if (numFax == null) {
+			if (other.numFax != null)
+				return false;
+		} else if (!numFax.equals(other.numFax))
+			return false;
+		if (pais == null) {
+			if (other.pais != null)
+				return false;
+		} else if (!pais.equals(other.pais))
+			return false;
+		if (prov == null) {
+			if (other.prov != null)
+				return false;
+		} else if (!prov.equals(other.prov))
+			return false;
+		if (region == null) {
+			if (other.region != null)
+				return false;
+		} else if (!region.equals(other.region))
+			return false;
+		if (telefonoMovil == null) {
+			if (other.telefonoMovil != null)
+				return false;
+		} else if (!telefonoMovil.equals(other.telefonoMovil))
+			return false;
+		if (telefonoTrabajo == null) {
+			if (other.telefonoTrabajo != null)
+				return false;
+		} else if (!telefonoTrabajo.equals(other.telefonoTrabajo))
+			return false;
+		if (tipoContacto == null) {
+			if (other.tipoContacto != null)
+				return false;
+		} else if (!tipoContacto.equals(other.tipoContacto))
+			return false;
+		return true;
 	}
-
 }
