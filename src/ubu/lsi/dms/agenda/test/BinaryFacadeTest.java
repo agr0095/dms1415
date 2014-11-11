@@ -6,7 +6,9 @@ import java.util.List;
 import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
-import ubu.lsi.dms.agenda.persistence.BinaryFacade;
+import ubu.lsi.dms.agenda.persistence.BinaryFactory;
+import ubu.lsi.dms.agenda.persistence.PersistenceFacade;
+import ubu.lsi.dms.agenda.persistence.PersistenceFactory;
 
 /**
  * Clase que contiene tests para probar la persistencia con ficheros binarios.
@@ -17,7 +19,8 @@ import ubu.lsi.dms.agenda.persistence.BinaryFacade;
 public class BinaryFacadeTest {
 
 	static CommonData data = CommonData.getInstance();
-	static BinaryFacade facade = (BinaryFacade) BinaryFacade.getInstance();
+	static PersistenceFactory factory = BinaryFactory.getInstance();
+	static PersistenceFacade facade = factory.createPersistenceFacade();
 	static File[] files = { new File(".\\rsc\\calls.dat"),
 			new File(".\\rsc\\contacts.dat"),
 			new File(".\\rsc\\contactTypes.dat") };
