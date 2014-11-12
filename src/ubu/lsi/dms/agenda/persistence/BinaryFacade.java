@@ -8,22 +8,48 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
 
 @SuppressWarnings("unchecked")
+/**
+ * Implements data persistence in files using file streams.
+ * 
+ * @author <a href="mailto:agr0095@alu.ubu.es">Alejandro González Rogel</a>
+ * @author <a href="mailto:ppp0015@alu.ubu.es">Plamen Petyov Petkov</a>
+ */
 public class BinaryFacade implements PersistenceFacade {
 
-	// Instancia de la propia clase
+	/**
+	 * Self-instance.
+	 */
 	private static final PersistenceFacade instance = new BinaryFacade();
 
-	// Los ficheros de persistencia
+	// Persistence file paths
+	/**
+	 * Calls persistence file path.
+	 */
 	private final File calls;
+	/**
+	 * Contacts persistence file path.
+	 */
 	private final File contacts;
+	/**
+	 * ContactTypes persistence file path.
+	 */
 	private final File contactTypes;
 
+	/**
+	 * 	
+	 */
+	Logger logger = Logger.getLogger("ubu.lsi.dms.agenda.persistence");
+	
+	/**
+	 * Private constructor. Initialize our file paths.
+	 */
 	private BinaryFacade() {
 		calls = new File(".\\rsc\\calls.dat");
 		contacts = new File(".\\rsc\\contacts.dat");
@@ -31,10 +57,9 @@ public class BinaryFacade implements PersistenceFacade {
 	} // BinaryFacade
 
 	/**
-	 * Devuelve una referencia a la instancia de la propia clase. La referencia
-	 * es a un objeto BinaryFacade.
+	 * Returns the reference to a BinaryFacade instance.
 	 * 
-	 * @return instancia de BinaryFacade.
+	 * @return BinaryFacade instance.
 	 */
 	public static PersistenceFacade getInstance() {
 		return instance;
@@ -168,12 +193,11 @@ public class BinaryFacade implements PersistenceFacade {
 	} // insertCall
 
 	/**
-	 * Carga un archivo de persistencia de objetos y devuelve una lista con los
-	 * objetos cargados.
+	 * Loads all the objects the file has stored.
 	 * 
 	 * @param file
-	 *            el archivo a cargar
-	 * @return la lista de objetos cargados
+	 *            we want to load
+	 * @return List of loaded objects
 	 */
 	private <T> List<T> loadFile(File file) {
 		List<T> list = new ArrayList<T>();
@@ -243,7 +267,7 @@ public class BinaryFacade implements PersistenceFacade {
 			try {
 				if (in != null)
 					in.close();
-				
+
 				if (out != null)
 					out.close();
 			} catch (IOException e) {
@@ -257,7 +281,7 @@ public class BinaryFacade implements PersistenceFacade {
 
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
-		boolean contactFound = false;
+		boolean callFound = false;
 		List<Call> listOfCalls = new ArrayList<Call>();
 
 		// Read all the contacts
@@ -267,17 +291,23 @@ public class BinaryFacade implements PersistenceFacade {
 				listOfCalls = loadFile(calls);
 				// Look for a contact with similar ID and
 				// ,if we find it, replace the contact with new information
-				for (int i = 0; i < listOfCalls.size() && !contactFound; i++) {
-					if (listOfCalls.get(i).getIdLlamada() == call.getIdLlamada()) {
+				for (int i = 0; i < listOfCalls.size() && !callFound; i++) {
+					if (listOfCalls.get(i).getIdLlamada() == call
+							.getIdLlamada()) {
 						listOfCalls.remove(i);
 						listOfCalls.add(i, call);
-						contactFound = true;
+						callFound = true;
 					}
 				}
 
-				// Store the new data again
-				out = new ObjectOutputStream(new FileOutputStream(calls));
-				out.writeObject(listOfCalls);
+				if (callFound) {
+					// Store the new data again
+					out = new ObjectOutputStream(new FileOutputStream(calls));
+					out.writeObject(listOfCalls);
+				} else {
+					logger.info("We couldn't update the given call. It doesn't exist.");
+				}
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -285,9 +315,9 @@ public class BinaryFacade implements PersistenceFacade {
 			try {
 				if (in != null)
 					in.close();
-				
-					if (out != null)
-						out.close();
+
+				if (out != null)
+					out.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -300,6 +330,7 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectOutputStream out = null;
 		boolean contactFound = false;
 		List<Contact> listOfContacts;
+
 
 		// Read all the contacts
 		try {
@@ -315,10 +346,13 @@ public class BinaryFacade implements PersistenceFacade {
 					contactFound = true;
 				}
 			}
-
-			// Store the new data again
-			out = new ObjectOutputStream(new FileOutputStream(contacts));
-			out.writeObject(listOfContacts);
+			if (contactFound) {
+				// Store the new data again
+				out = new ObjectOutputStream(new FileOutputStream(contacts));
+				out.writeObject(listOfContacts);
+			} else {
+				logger.info("We couldn't update the given contact. It doesn't exist.");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -340,6 +374,7 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectOutputStream out = null;
 		boolean contactFound = false;
 		List<ContactType> listOfCTs;
+		
 
 		// Read all the contacts
 		try {
@@ -348,19 +383,23 @@ public class BinaryFacade implements PersistenceFacade {
 			// Look for a contact with similar ID and
 			// ,if we find it, replace the contact with new information
 			for (int i = 0; i < listOfCTs.size() && !contactFound; i++) {
-				if (listOfCTs.get(i).getIdTipoContacto() == ct.getIdTipoContacto()) {
+				if (listOfCTs.get(i).getIdTipoContacto() == ct
+						.getIdTipoContacto()) {
 					listOfCTs.remove(i);
 					listOfCTs.add(i, ct);
 					contactFound = true;
 				}
 			}
 
-			// Store the new data again
-			out = new ObjectOutputStream(new FileOutputStream(contactTypes));
-			out.writeObject(listOfCTs);
+			if (contactFound) { // Store the new data again
+				out = new ObjectOutputStream(new FileOutputStream(contactTypes));
+				out.writeObject(listOfCTs);
+			} else {
+				logger.info("We couldn't update the given contact type. It doesn't exist.");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		} finally { // We close all the Streams we may have opened.
 			try {
 				if (in != null)
 					in.close();

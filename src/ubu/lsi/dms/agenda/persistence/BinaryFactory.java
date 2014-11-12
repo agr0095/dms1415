@@ -1,27 +1,26 @@
 package ubu.lsi.dms.agenda.persistence;
 
+/**
+ * 
+ * 
+ * @author <a href="mailto:agr0095@alu.ubu.es">Alejandro González Rogel</a>
+ * @author <a href="mailto:ppp0015@alu.ubu.es">Plamen Petyov Petkov</a>
+ */
 public class BinaryFactory implements PersistenceFactory {
 
-	private static PersistenceFactory instance = new BinaryFactory();;
+	private static PersistenceFactory instance = new BinaryFactory();
 
 	private BinaryFactory() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ubu.lsi.dms.agenda.persistence.PersistenceFactory#createPersistenceFacade
-	 * ()
-	 */
+
 	@Override
 	public PersistenceFacade createPersistenceFacade() {
 		return BinaryFacade.getInstance();
 	} // createPersistenceFacade
 
 	/**
-	 * Devuelve una referencia a la instancia de la propia clase. La referencia
-	 * es a un objeto BinaryFactory.
+	 * Returns a BinaryFactory instance.
 	 * 
 	 * @return
 	 */

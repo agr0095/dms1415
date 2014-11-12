@@ -9,16 +9,15 @@ import ubu.lsi.dms.agenda.modelo.ContactType;
 public interface PersistenceFacade {
 
 	/**
-	 * Busca un contacto por apellido dentro de la agenda
+	 * Looks for a contact with the given surname
 	 * 
 	 * @param surname
-	 *            Apellido del contacto
-	 * @return
+	 * @return contact with similar surname
 	 */
 	public Contact getContact(String surname);
 
 	/**
-	 * Inserta un contacto en la persistencia.
+	 * Inserts a contact using persistence.
 	 * 
 	 * @param contact
 	 */
