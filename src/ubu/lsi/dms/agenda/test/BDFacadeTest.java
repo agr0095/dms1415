@@ -6,8 +6,9 @@ import java.util.List;
 import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
-import ubu.lsi.dms.agenda.persistence.DBFacade;
+import ubu.lsi.dms.agenda.persistence.DBFactory;
 import ubu.lsi.dms.agenda.persistence.PersistenceFacade;
+import ubu.lsi.dms.agenda.persistence.PersistenceFactory;
 
 /**
  * Contiene los métodos necesarios para probar
@@ -18,9 +19,13 @@ import ubu.lsi.dms.agenda.persistence.PersistenceFacade;
  */
 public class BDFacadeTest {
 	/**
+	 * Creamos la fábrica de persistencia
+	 */
+	private static PersistenceFactory factory = DBFactory.getInstance();
+	/**
 	 * Generamos la instancia de la fachada de persistencia.
 	 */
-	private static PersistenceFacade dbf = DBFacade.getInstance();
+	private static PersistenceFacade dbf = factory.createPersistenceFacade();
 	
 	/**
 	 * Generamos los datos que vamos a emplear.
