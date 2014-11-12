@@ -6,22 +6,48 @@ import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
 
+/**
+ * Interfaz fachada que se utiliza para la creación de una fachada persistente.
+ * Se aplica el patron de diseño Abstract Factory. Participante como producto
+ * abstracto.
+ * 
+ * @author Plamen Petyov Petkov
+ * 
+ */
 public interface PersistenceFacade {
 
 	/**
-	 * Looks for a contact with the given surname
+	 * Obtiene las llamadas de un contacto
+	 * 
+	 * @param contacto
+	 *            Contacto del que obtener las llamadas.
+	 */
+	public List<Call> getCallsByContact(Contact contacto);
+
+	/**
+	 * Busca a un contacto por apellido.
 	 * 
 	 * @param surname
-	 * @return contact with similar surname
+	 * @return el primer contacto con ese apellido.
 	 */
 	public Contact getContact(String surname);
 
 	/**
-	 * Inserts a contact using persistence.
+	 * Obtiene una lista de todos los contactos existentes en la persistencia
+	 * filtrados por el apellido.
 	 * 
-	 * @param contact
+	 * @param surname
+	 * @return lista de contactos con ese apellido.
 	 */
-	public void insertContact(Contact contact);
+	public List<Contact> getContactsBySurname(String surname);
+
+	/**
+	 * Devuelve una lista con todos los tipos de contacto existentes en la
+	 * persistencia.
+	 * 
+	 * @return lista de todos los tipos de contacto.
+	 */
+	public List<ContactType> getContactTypes();
 
 	/**
 	 * Inserta una llamada (incluyendo la referencia a un contacto) (Al final
@@ -33,21 +59,20 @@ public interface PersistenceFacade {
 	public void insertCall(Call call);
 
 	/**
-	 * Insertamos un tipo de contacto en la persistencia
-	 * 
-	 * @param ct
-	 */
-	public void insertContactType(ContactType ct);
-
-	/**
-	 * Actualizamos los datos de un contacto en la base de datos. Solamente
-	 * actualiza, no inserta nada. Lanzamos algo que diga que no había nada que
-	 * actualizar.
+	 * Inserta un contacto en la persistencia.
 	 * 
 	 * @param contact
-	 *            Contacto a actualizar.
+	 *            contacto a insertar.
 	 */
-	public void updateContact(Contact contact);
+	public void insertContact(Contact contact);
+
+	/**
+	 * Inserta un tipo de contacto en la persistencia.
+	 * 
+	 * @param ct
+	 *            Tipo de contacto a insertar.
+	 */
+	public void insertContactType(ContactType ct);
 
 	/**
 	 * Actualiza una llamada en la persistencia.
@@ -58,36 +83,21 @@ public interface PersistenceFacade {
 	public void updateCall(Call call);
 
 	/**
+	 * Actualiza los datos de un contacto en la base de datos. Solamente
+	 * actualiza, no inserta nada. Lanza algo que diga que no había nada que
+	 * actualizar.
+	 * 
+	 * @param contact
+	 *            Contacto a actualizar.
+	 */
+	public void updateContact(Contact contact);
+
+	/**
 	 * Actualiza el nombre del tipo de contacto contra la persistencia.
 	 * 
 	 * @param ct
 	 *            Tipo de contacto a actualizar
 	 */
 	public void updateContactType(ContactType ct);
-
-	/**
-	 * Obtiene una lista de todos los contactos existentes en la persistencia
-	 * filtrados por el apellido
-	 * 
-	 * @param surname
-	 * @return
-	 */
-	public List<Contact> getContactsBySurname(String surname);
-
-	/**
-	 * Obtener las llamadas de un contacto
-	 * 
-	 * @param contacto
-	 *            Contacto del que obtener las llamadas
-	 */
-	public List<Call> getCallsByContact(Contact contacto);
-
-	/**
-	 * Devuelve una lista con todos los tipos de contacto existentes en la
-	 * persistencia.
-	 * 
-	 * @return Tipos de contacto
-	 */
-	public List<ContactType> getContactTypes();
 
 }

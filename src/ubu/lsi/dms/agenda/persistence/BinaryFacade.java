@@ -16,45 +16,13 @@ import ubu.lsi.dms.agenda.modelo.ContactType;
 
 @SuppressWarnings("unchecked")
 /**
- * Implements data persistence in files using file streams.
- * 
+ * Class that creates a binary persistence facade.
+ * Facade pattern is applied to this class.
+ * Singleton pattern is applied to this class.
  * @author <a href="mailto:agr0095@alu.ubu.es">Alejandro González Rogel</a>
  * @author <a href="mailto:ppp0015@alu.ubu.es">Plamen Petyov Petkov</a>
  */
 public class BinaryFacade implements PersistenceFacade {
-
-	/**
-	 * Self-instance.
-	 */
-	private static final PersistenceFacade instance = new BinaryFacade();
-
-	// Persistence file paths
-	/**
-	 * Calls persistence file path.
-	 */
-	private final File calls;
-	/**
-	 * Contacts persistence file path.
-	 */
-	private final File contacts;
-	/**
-	 * ContactTypes persistence file path.
-	 */
-	private final File contactTypes;
-
-	/**
-	 * 	
-	 */
-	Logger logger = Logger.getLogger("ubu.lsi.dms.agenda.persistence");
-	
-	/**
-	 * Private constructor. Initialize our file paths.
-	 */
-	private BinaryFacade() {
-		calls = new File(".\\rsc\\calls.dat");
-		contacts = new File(".\\rsc\\contacts.dat");
-		contactTypes = new File(".\\rsc\\contactTypes.dat");
-	} // BinaryFacade
 
 	/**
 	 * Returns the reference to a BinaryFacade instance.
@@ -64,6 +32,39 @@ public class BinaryFacade implements PersistenceFacade {
 	public static PersistenceFacade getInstance() {
 		return instance;
 	} // getInstance
+
+	/**
+	 * Self-instance.
+	 */
+	private static final PersistenceFacade instance = new BinaryFacade();
+	// Persistence file paths
+	/**
+	 * Calls persistence file path.
+	 */
+	private final File calls;
+	/**
+	 * Contacts persistence file path.
+	 */
+	private final File contacts;
+
+	/**
+	 * ContactTypes persistence file path.
+	 */
+	private final File contactTypes;
+
+	/**
+	 * 	
+	 */
+	Logger logger = Logger.getLogger("ubu.lsi.dms.agenda.persistence");
+
+	/**
+	 * Private constructor. Initialize our file paths.
+	 */
+	private BinaryFacade() {
+		calls = new File(".\\rsc\\calls.dat");
+		contacts = new File(".\\rsc\\contacts.dat");
+		contactTypes = new File(".\\rsc\\contactTypes.dat");
+	} // BinaryFacade
 
 	@Override
 	public List<Call> getCallsByContact(Contact contact) {
@@ -192,34 +193,6 @@ public class BinaryFacade implements PersistenceFacade {
 		}
 	} // insertCall
 
-	/**
-	 * Loads all the objects the file has stored.
-	 * 
-	 * @param file
-	 *            we want to load
-	 * @return List of loaded objects
-	 */
-	private <T> List<T> loadFile(File file) {
-		List<T> list = new ArrayList<T>();
-		ObjectInputStream in = null;
-
-		try {
-			in = new ObjectInputStream(new FileInputStream(file));
-			list = (ArrayList<T>) in.readObject();
-
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return list;
-	} // loadFile
-
 	@Override
 	public void insertContact(Contact contact) {
 		ObjectOutputStream out = null;
@@ -276,6 +249,34 @@ public class BinaryFacade implements PersistenceFacade {
 		}
 	} // insertContactType
 
+	/**
+	 * Loads all the objects the file has stored.
+	 * 
+	 * @param file
+	 *            we want to load
+	 * @return List of loaded objects
+	 */
+	private <T> List<T> loadFile(File file) {
+		List<T> list = new ArrayList<T>();
+		ObjectInputStream in = null;
+
+		try {
+			in = new ObjectInputStream(new FileInputStream(file));
+			list = (ArrayList<T>) in.readObject();
+
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	} // loadFile
+
 	@Override
 	public void updateCall(Call call) {
 
@@ -331,7 +332,6 @@ public class BinaryFacade implements PersistenceFacade {
 		boolean contactFound = false;
 		List<Contact> listOfContacts;
 
-
 		// Read all the contacts
 		try {
 			in = new ObjectInputStream(new FileInputStream(contacts));
@@ -374,7 +374,6 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectOutputStream out = null;
 		boolean contactFound = false;
 		List<ContactType> listOfCTs;
-		
 
 		// Read all the contacts
 		try {
