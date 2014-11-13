@@ -14,8 +14,7 @@ import ubu.lsi.dms.agenda.persistence.PersistenceFactory;
  * Contiene los métodos necesarios para probar
  * la persistencia sobre bases de datos.
  * 
- * @author killer7129
- *
+ * @author <a href="mailto:ava0031@alu.ubu.es">Alberto Vivar Arribas</a>
  */
 public class BDFacadeTest {
 	/**
@@ -41,9 +40,18 @@ public class BDFacadeTest {
 	
 
 	public static void main(String[] args) {
+		/*
+		 * Si las aserciones no están activadas en la máquina virtual
+		 * no tiene sentido lanzar las pruebas.
+		 */
+		if(!areAssertsEnabled()){
 		System.out.println("Para que las pruebas funcionen correctamente,\n" +
 	"activa las aserciones con -ea como parámetro de la máquina virtual de java,\n"
 	+ "además de tener las tablas creadas y vacías...");
+		System.err.println("Pruebas abortadas!!!");
+		return;
+		}
+		//Las pruebas en sí
 		System.out.println("Comenzando pruebas...\n");
 		pruebasTiposDeContacto();
 		System.out.println("Pruebas de tipos de contactos pasadas!!!");
@@ -54,6 +62,20 @@ public class BDFacadeTest {
 		System.out.println("Enhorabuena, todas las pruebas de BBDD han salido correctamente!!!");
 	}
 
+	/**
+	 * Comprueba si los asertos están activadas
+	 * 
+	 * @return Cierto si están activadas, falso si no.
+	 */
+	public static boolean areAssertsEnabled() {
+		boolean isEnabled = false;
+		try{
+			assert false;
+		}catch(AssertionError ex){
+			isEnabled = true;
+		}
+		return isEnabled;
+	}
 	/**
 	 * Pruebas que se realizan a los tipos de contacto.
 	 */
