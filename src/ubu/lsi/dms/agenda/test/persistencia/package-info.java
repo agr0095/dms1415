@@ -5,4 +5,4 @@
  * @author clopezno
  *
  */
-package ubu.lsi.dms.agenda.test;
+package ubu.lsi.dms.agenda.test.persistencia;

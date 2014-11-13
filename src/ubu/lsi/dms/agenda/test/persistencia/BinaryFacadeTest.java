@@ -1,4 +1,4 @@
-package ubu.lsi.dms.agenda.test;
+package ubu.lsi.dms.agenda.test.persistencia;
 
 import java.io.File;
 import java.util.List;
