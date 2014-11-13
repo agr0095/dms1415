@@ -246,6 +246,9 @@ public class DBFacade implements PersistenceFacade {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
 				contraseña)) {
+			if(getContact(call.getContacto().getApellidos()).getApellidos() == null){
+				insertContact(call.getContacto());
+			}
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn.prepareStatement(insertCallSentence);
 

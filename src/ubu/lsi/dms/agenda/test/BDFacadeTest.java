@@ -101,7 +101,7 @@ public class BDFacadeTest {
 		 * que los cambios se hayan reflejado en la BBDD.
 		 */
 		for(ContactType contactType: contactTypeListFromCode){
-			contactType.setTipoContacto(contactType.getTipoContacto() + "0");
+			contactType.setTipoContacto(contactType.getTipoContacto() + "1");
 			dbf.updateContactType(contactType);
 		}
 		contactTypeListFromDB.addAll(dbf.getContactTypes());
@@ -135,7 +135,7 @@ public class BDFacadeTest {
 		 */
 		for(Call call:callListFromCode){
 			//Cambiamos un campo, como por ejemplo el de las notas
-			call.setNotas(call.getNotas() + "0");
+			call.setNotas(call.getNotas() + "1");
 			dbf.updateCall(call);
 			callListFromDB.addAll(dbf.getCallsByContact(call.getContacto()));
 		}
@@ -173,7 +173,7 @@ public class BDFacadeTest {
 		 */
 		for(Contact contact: contactListFromCode){
 			//Cambiamos un campo, por ejemplo los apellidos
-			contact.setApellidos(contact.getApellidos() + "0");
+			contact.setApellidos(contact.getApellidos() + "1");
 			dbf.updateContact(contact);
 			contactListListFromDB.addAll(dbf.getContactsBySurname(contact.getApellidos()));
 			contactListFromDB.add(dbf.getContact(contact.getApellidos()));
