@@ -12,6 +12,14 @@ import ubu.lsi.dms.agenda.modelo.Call;
 import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
 
+/**
+ * Clase fachada que realiza la función de fachada para las operaciones
+ * de persistencia sobre una base de datos. Además cumple 
+ * el patrón singleton.
+ * 
+ * @author <a href="mailto:ava0031@alu.ubu.es">Alberto Vivar Arribas</a>
+ * @author <a href="mailto:mlj0004@alu.ubu.es">Mario López Jiménez</a>
+ */
 public class DBFacade implements PersistenceFacade {
 
 	/**
