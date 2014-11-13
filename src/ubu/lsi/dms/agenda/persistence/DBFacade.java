@@ -13,9 +13,8 @@ import ubu.lsi.dms.agenda.modelo.Contact;
 import ubu.lsi.dms.agenda.modelo.ContactType;
 
 /**
- * Clase fachada que realiza la función de fachada para las operaciones
- * de persistencia sobre una base de datos. Además cumple 
- * el patrón singleton.
+ * Clase fachada que realiza la función de fachada para las operaciones de
+ * persistencia sobre una base de datos. Además cumple el patrón singleton.
  * 
  * @author <a href="mailto:ava0031@alu.ubu.es">Alberto Vivar Arribas</a>
  * @author <a href="mailto:mlj0004@alu.ubu.es">Mario López Jiménez</a>
@@ -246,7 +245,7 @@ public class DBFacade implements PersistenceFacade {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
 				contraseña)) {
-			if(getContact(call.getContacto().getApellidos()).getApellidos() == null){
+			if (getContact(call.getContacto().getApellidos()).getApellidos() == null) {
 				insertContact(call.getContacto());
 			}
 			// Preparamos la sentencia y la ejecutamos

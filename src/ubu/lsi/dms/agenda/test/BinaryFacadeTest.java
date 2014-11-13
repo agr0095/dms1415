@@ -24,7 +24,7 @@ public class BinaryFacadeTest {
 	static File[] files = { new File(".\\rsc\\calls.dat"),
 			new File(".\\rsc\\contacts.dat"),
 			new File(".\\rsc\\contactTypes.dat") };
-	
+
 	// Datos de prueba obtenidos de la clase CommonData
 	static List<Call> calls = data.getCallList();
 	static List<Contact> contacts = data.getContactList();
@@ -32,15 +32,35 @@ public class BinaryFacadeTest {
 
 	public static void main(String args[]) {
 
-		List<ContactType> listOfCTs;
-		List<Contact> listOfContacts;
+		removeFiles();
+		/*
+		 * Si las aserciones no están activadas en la máquina virtual no tiene
+		 * sentido lanzar las pruebas.
+		 */
+		if (!areAssertsEnabled()) {
+			System.out
+					.println("Para que las pruebas funcionen correctamente,\n"
+							+ "activa las aserciones con -ea como parámetro de la máquina virtual de java,\n");
+			System.err.println("Pruebas abortadas");
+			return;
+		}
+
+		ctTest();
+
+		contactTest();
+
+		callTest();
+
+		System.out.println("All tests concluded successfully!");
+
+	} // main
+
+	/**
+	 * Test para los metodos de la fachada que trabajan con la clase Call
+	 */
+	private static void callTest() {
 		List<Call> listOfCalls;
 
-		removeFiles();
-
-		/*
-		 * Test para los metodos de la fachada que trabajan con la clase Call
-		 */
 		// Inserta las llamadas de la lista de datos
 		for (Call call : calls)
 			facade.insertCall(call);
@@ -55,43 +75,23 @@ public class BinaryFacadeTest {
 					"", "");
 			facade.updateCall(newCall);
 		}
-		
+
 		// Obtiene las llamadas del segundo contacto de la lista de datos
-		// Comprueba que el numero de llamadas obtenidas es igual al numero total de llamadas
-		// Comprueba que el numero de llamadas del primer contacto de la lista es 0
+		// Comprueba que el numero de llamadas obtenidas es igual al numero
+		// total de llamadas
+		// Comprueba que el numero de llamadas del primer contacto de la lista
+		// es 0
 		listOfCalls = facade.getCallsByContact(contacts.get(1));
 		assert listOfCalls.size() == calls.size();
 		assert facade.getCallsByContact(contacts.get(0)).size() == 0;
+	}
 
-		/*
-		 * Tests para los metodos de la fachada que trabajan con la clase
-		 * ContactType
-		 */
-		// Inserta los tipo de contacto de la lista de datos
-		for (ContactType ct : contactTypes)
-			facade.insertContactType(ct);
+	/**
+	 * Tests para los metodos de la fachada que trabajan con la clase
+	 */
+	private static void contactTest() {
+		List<Contact> listOfContacts;
 
-		// Obtiene la los tipos de contacto
-		listOfCTs = facade.getContactTypes();
-		// Comprueba que la lista contiene a todos los tipos de contacto
-		// insertados
-		assert listOfCTs.containsAll(contactTypes);
-
-		// Actualiza un tipo de contacto añadiendo la cadena "updated"
-		for (ContactType ct : listOfCTs)
-			facade.updateContactType(new ContactType(ct.getIdTipoContacto(), ct
-					.getTipoContacto() + "updated"));
-
-		listOfCTs = facade.getContactTypes();
-		// Comprueba que todos los tipos de contacto contienen la cadena
-		// "updated"
-		for (ContactType ct : listOfCTs)
-			assert ct.getTipoContacto().contains("updated");
-
-		/*
-		 * Tests para los metodos de la fachada que trabajan con la clase
-		 * ContactType
-		 */
 		// Inserta los contactos de la lista de datos
 		for (Contact contact : contacts)
 			facade.insertContact(contact);
@@ -116,10 +116,35 @@ public class BinaryFacadeTest {
 		listOfContacts = facade.getContactsBySurname("ApellidosNuevos");
 		for (Contact contact : listOfContacts)
 			assert !(contacts.contains(contact));
+	}
 
-		System.out.println("All tests concluded successfully!");
+	/**
+	 * Tests para los metodos de la fachada que trabajan con la clase
+	 */
+	private static void ctTest() {
+		List<ContactType> listOfCTs;
 
-	} // main
+		// Inserta los tipo de contacto de la lista de datos
+		for (ContactType ct : contactTypes)
+			facade.insertContactType(ct);
+
+		// Obtiene la los tipos de contacto
+		listOfCTs = facade.getContactTypes();
+		// Comprueba que la lista contiene a todos los tipos de contacto
+		// insertados
+		assert listOfCTs.containsAll(contactTypes);
+
+		// Actualiza un tipo de contacto añadiendo la cadena "updated"
+		for (ContactType ct : listOfCTs)
+			facade.updateContactType(new ContactType(ct.getIdTipoContacto(), ct
+					.getTipoContacto() + "updated"));
+
+		listOfCTs = facade.getContactTypes();
+		// Comprueba que todos los tipos de contacto contienen la cadena
+		// "updated"
+		for (ContactType ct : listOfCTs)
+			assert ct.getTipoContacto().contains("updated");
+	}
 
 	/**
 	 * Elimina los archivos de persistencia en caso de que existan.
@@ -129,5 +154,20 @@ public class BinaryFacadeTest {
 			if (file.exists())
 				file.delete();
 	} // removeFiles
+
+	/**
+	 * Comprueba si los asertos están activadas
+	 * 
+	 * @return Cierto si están activadas, falso si no.
+	 */
+	public static boolean areAssertsEnabled() {
+		boolean isEnabled = false;
+		try {
+			assert false;
+		} catch (AssertionError ex) {
+			isEnabled = true;
+		}
+		return isEnabled;
+	}
 
 } // class BinaryFacadeTest

@@ -53,7 +53,7 @@ public class BinaryFacade implements PersistenceFacade {
 	private final File contactTypes;
 
 	/**
-	 * 	
+	 * Log messages about the BinaryFacade insertions
 	 */
 	Logger logger = Logger.getLogger("ubu.lsi.dms.agenda.persistence");
 
@@ -169,15 +169,28 @@ public class BinaryFacade implements PersistenceFacade {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		List<Call> listOfCalls = new ArrayList<Call>();
+		List<Contact> listOfContacts = new ArrayList<Contact>();
+		boolean contactFound = false;
 
 		try {
 			if (calls.exists())
 				// Take everything from the files
 				listOfCalls = loadFile(calls);
-
 			out = new ObjectOutputStream(new FileOutputStream(calls));
 			listOfCalls.add(call);
 			out.writeObject(listOfCalls);
+			// We look for if the contact who called us is already stored in our
+			// agenda.
+			if (contacts.exists()) {
+				listOfContacts = loadFile(contacts);
+				for (Contact c : listOfContacts)
+					if (c.getIdContacto() == call.getContacto().getIdContacto())
+						contactFound = true;
+			}
+			// If the contact isn't there we add it
+			if (!contactFound) {
+				insertContact(call.getContacto());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -290,7 +303,7 @@ public class BinaryFacade implements PersistenceFacade {
 			if (calls.exists()) {
 				in = new ObjectInputStream(new FileInputStream(calls));
 				listOfCalls = loadFile(calls);
-				// Look for a contact with similar ID and
+				// Look for a call with similar ID and
 				// ,if we find it, replace the contact with new information
 				for (int i = 0; i < listOfCalls.size() && !callFound; i++) {
 					if (listOfCalls.get(i).getIdLlamada() == call

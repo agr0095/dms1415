@@ -56,7 +56,7 @@ public class CommonData {
 			Call call = new Call(i, contact, "2014-10-18 01:00:00.000000",
 					"Asunto" + letra, "Notas" + letra);
 
-			if(i<10){
+			if (i < 10) {
 				contactList.add(contact);
 				contactTypeList.add(contactType);
 			}
