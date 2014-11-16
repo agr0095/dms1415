@@ -17,7 +17,7 @@ public class BinaryFactory implements PersistenceFactory {
 	 * 
 	 * @return instance la referencia a la instancia única.
 	 */
-	public static PersistenceFactory getInstance() {
+	public static BinaryFactory getInstance() {
 		return instance;
 	} // getInstance
 
@@ -25,7 +25,7 @@ public class BinaryFactory implements PersistenceFactory {
 	 * Guarda una referencia a la instancia de la propia clase. Atributo
 	 * necesario para el patron Singleton.
 	 */
-	private static PersistenceFactory instance = new BinaryFactory();
+	private static BinaryFactory instance = new BinaryFactory();
 
 	/**
 	 * Constructor privado para evitar instanciaciones externas.
@@ -41,7 +41,7 @@ public class BinaryFactory implements PersistenceFactory {
 	 * ()
 	 */
 	@Override
-	public PersistenceFacade createPersistenceFacade() {
+	public BinaryFacade createPersistenceFacade() {
 		return BinaryFacade.getInstance();
 	} // createPersistenceFacade
 

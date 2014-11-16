@@ -1,6 +1,6 @@
 package ubu.lsi.dms.agenda.persistence;
 
-import java.sql.Connection;
+import java.sql.Connection; 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,11 +27,11 @@ public class DBFacade implements PersistenceFacade {
 	 * 
 	 * @return instancia de DBFacade.
 	 */
-	public static PersistenceFacade getInstance() {
+	public static DBFacade getInstance() {
 		return instance;
 	}
 
-	private static final PersistenceFacade instance = new DBFacade();
+	private static final DBFacade instance = new DBFacade();
 
 	/*
 	 * Datos importantes de la base de datos.
@@ -42,7 +42,7 @@ public class DBFacade implements PersistenceFacade {
 	 * Nombres descriptivos que almacenan la sentencia correspondiente a las
 	 * diferentes operaciones.
 	 */
-	private final String urlDB, usuario, contraseña, getContactSentence,
+	private final String urlDB, usuario, contrasena, getContactSentence,
 			getContactsBySurnameSentence, getContactTypesSentence,
 			getCallsByContactSentence, insertContactSentence,
 			insertContactTypeSentence, insertCallSentence,
@@ -56,7 +56,7 @@ public class DBFacade implements PersistenceFacade {
 	private DBFacade() {
 		urlDB = "jdbc:hsqldb:hsql://localhost/mydatabase";
 		usuario = "SA";
-		contraseña = "";
+		contrasena = "";
 
 		// Creamos las sentencias de seleción
 		getContactSentence = "select * from contactos left join tiposdecontacto using (idtipocontacto) where apellidos = ?";
@@ -77,7 +77,7 @@ public class DBFacade implements PersistenceFacade {
 		List<Call> callList = new ArrayList<Call>();
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn
 					.prepareStatement(getCallsByContactSentence);
@@ -110,7 +110,7 @@ public class DBFacade implements PersistenceFacade {
 		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn.prepareStatement(getContactSentence);
@@ -164,7 +164,7 @@ public class DBFacade implements PersistenceFacade {
 		String nombre = null, apellidos = null, estimado = null, direccion = null, ciudad = null, prov = null, codPostal = null, region = null, pais = null, nombreCompania = null, cargo = null, telefonoTrabajo = null, extensionTrabajo = null, telefonoMovil = null, numFax = null, nomCorreoElectronico = null, notas = null, tipoContacto = null;
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn
 					.prepareStatement(getContactsBySurnameSentence);
@@ -217,7 +217,7 @@ public class DBFacade implements PersistenceFacade {
 		List<ContactType> contactList = new ArrayList<ContactType>();
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn
 					.prepareStatement(getContactTypesSentence);
@@ -244,7 +244,7 @@ public class DBFacade implements PersistenceFacade {
 	public void insertCall(Call call) {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			if (getContact(call.getContacto().getApellidos()).getApellidos() == null) {
 				insertContact(call.getContacto());
 			}
@@ -274,7 +274,7 @@ public class DBFacade implements PersistenceFacade {
 	public void insertContact(Contact contact) {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn.prepareStatement(insertContactSentence);
@@ -317,7 +317,7 @@ public class DBFacade implements PersistenceFacade {
 	public void insertContactType(ContactType ct) {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn
 					.prepareStatement(insertContactTypeSentence);
@@ -342,7 +342,7 @@ public class DBFacade implements PersistenceFacade {
 	public void updateCall(Call call) {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn.prepareStatement(updateCallSentence);
 
@@ -370,7 +370,7 @@ public class DBFacade implements PersistenceFacade {
 	public void updateContact(Contact contact) {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn.prepareStatement(updateContactSentence);
 
@@ -412,7 +412,7 @@ public class DBFacade implements PersistenceFacade {
 	public void updateContactType(ContactType ct) {
 
 		try (Connection conn = DriverManager.getConnection(urlDB, usuario,
-				contraseña)) {
+				contrasena)) {
 			// Preparamos la sentencia y la ejecutamos
 			PreparedStatement ps = conn
 					.prepareStatement(updateContactTypeSentence);

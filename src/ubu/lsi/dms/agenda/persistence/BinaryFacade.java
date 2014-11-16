@@ -29,14 +29,16 @@ public class BinaryFacade implements PersistenceFacade {
 	 * 
 	 * @return BinaryFacade instance.
 	 */
-	public static PersistenceFacade getInstance() {
+	public static BinaryFacade getInstance() {
+		if(instance == null)
+			instance = new BinaryFacade();
 		return instance;
 	} // getInstance
 
 	/**
 	 * Self-instance.
 	 */
-	private static final PersistenceFacade instance = new BinaryFacade();
+	private static BinaryFacade instance = null;
 	// Persistence file paths
 	/**
 	 * Calls persistence file path.

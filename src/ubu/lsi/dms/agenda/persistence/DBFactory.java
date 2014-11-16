@@ -17,7 +17,7 @@ public class DBFactory implements PersistenceFactory {
 	 * 
 	 * @return instance la referencia a la instancia única.
 	 */
-	public static PersistenceFactory getInstance() {
+	public static DBFactory getInstance() {
 		return instance;
 	} // getInstance
 
@@ -25,7 +25,7 @@ public class DBFactory implements PersistenceFactory {
 	 * Guarda una referencia a la instancia de la propia clase. Atributo
 	 * necesario para el patron Singleton.
 	 */
-	private static PersistenceFactory instance = new DBFactory();
+	private static DBFactory instance = new DBFactory();
 
 	/**
 	 * Constructor privado para evitar instanciaciones externas.
@@ -41,7 +41,7 @@ public class DBFactory implements PersistenceFactory {
 	 * ()
 	 */
 	@Override
-	public PersistenceFacade createPersistenceFacade() {
+	public DBFacade createPersistenceFacade() {
 		return DBFacade.getInstance();
 	} // createPersistenceFacade
 
